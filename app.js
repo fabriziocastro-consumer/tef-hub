@@ -119,12 +119,12 @@ const guiasPix = {
   },
   "BANCO SICOOB": {
     title: "Banco Sicoob",
-    file: "sicoob.pdf",
+    file: "banco-sicoob.pdf",
     preview: true
   },
   "BANCO SICREDI": {
     title: "Banco Sicredi",
-    file: "sicredi.pdf",
+    file: "banco-sicredi.pdf",
     preview: true
   },
   BANRISUL: {
