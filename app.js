@@ -741,7 +741,6 @@ function buildSummary(data, mask = true) {
     lines.push("");
     lines.push("DADOS DO TEF");
     addLine(lines, "Adquirente afiliada", data.adquirente);
-    addLine(lines, "Métrica obrigatória", regra?.ruleText);
     addLine(lines, "Número rede/código cadastrado", data.numeroRede);
     addLine(lines, regra?.label || "Número lógico", data.numeroLogico);
 
