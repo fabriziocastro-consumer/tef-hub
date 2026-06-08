@@ -133,7 +133,10 @@ const guiasPix = {
 
 E-mail para envio: inovacaocon@banrisul.com.br
 
-No e-mail, solicite o credenciamento do PIX via TEF e o envio das chaves de integração: Client ID, Client Secret e Chave_Dict.
+No e-mail, solicite o credenciamento do PIX via TEF e o envio das chaves de integração: 
+Client ID: 
+Client Secret: 
+Chave_Dict:
 
 DADOS DO CLIENTE FINAL TEF:
 - Nome do Cliente (Empresa):
@@ -313,7 +316,7 @@ function updatePixGuide(banco) {
   }
 
   bankPdfTitle.textContent = `Passo a passo para ${guia.title}`;
-  bankPdfText.textContent = guia.description || "Antes de preencher as credenciais, abra ou baixe o PDF para seguir o passo a passo do banco selecionado.";
+  bankPdfText.textContent = guia.description || "Antes de preencher as credenciais, abra ou baixe o PDF para seguir o passo a passo do banco selecionado e gerar as credenciais.";
 
   if (guia.file) {
     bankPdfDownload.href = guia.file;
@@ -408,7 +411,7 @@ function updateRequestVisibility() {
     pinpadModelo.innerHTML = '<option value="">Selecione primeiro a marca</option>';
     modeloHint.textContent = "Modelos aceitos serão exibidos conforme a marca.";
     numeroLogicoLabel.textContent = "Número lógico *";
-    adquirenteHint.textContent = "Selecione a adquirente para ver a métrica obrigatória.";
+    adquirenteHint.textContent = "Selecione a adquirente.";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
   } else {
     updateAdquirenteRule();
@@ -448,7 +451,7 @@ function updateAdquirenteRule() {
 
   if (!regra) {
     numeroLogicoLabel.textContent = "Número lógico *";
-    adquirenteHint.textContent = "Selecione a adquirente para ver a métrica obrigatória.";
+    adquirenteHint.textContent = "Selecione a adquirente";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
     return;
   }
@@ -751,7 +754,7 @@ function buildSummary(data, mask = true) {
   if (dataNeedsPix(data)) {
     lines.push("");
     lines.push("PIX NO TEF");
-    addLine(lines, "Banco escolhido", data.bancoPix);
+    addLine(lines, "Banco:", data.bancoPix);
 
     Object.entries(data.pixCampos || {}).forEach(([key, value]) => {
       addLine(lines, key, mask ? maskSensitive(key, value) : value);
