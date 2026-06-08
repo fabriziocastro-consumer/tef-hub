@@ -81,32 +81,32 @@ const regrasPix = {
 const guiasPix = {
   "BANCO DO BRASIL": {
     title: "Banco do Brasil",
-    file: "/tef-hub/banco-do-brasil.pdf",
+    file: "banco-do-brasil.pdf",
     preview: true
   },
   "BANCO DO NORDESTE": {
     title: "Banco do Nordeste",
-    file: "/tef-hub/banco-do-nordeste.pdf",
+    file: "banco-do-nordeste.pdf",
     preview: true
   },
   "BANCO BRADESCO": {
     title: "Banco Bradesco",
-    file: "/tef-hub/banco-bradesco.pdf",
+    file: "banco-bradesco.pdf",
     preview: true
   },
   "BANCO ITAU": {
     title: "Banco Itaú",
-    file: "/tef-hub/banco-itau.pdf",
+    file: "banco-itau.pdf",
     preview: true
   },
   "BANCO MERCADO PAGO": {
     title: "Banco Mercado Pago",
-    file: "/tef-hub/mercado-pago.pdf",
+    file: "mercado-pago.pdf",
     preview: true
   },
   "BANCO PAGSEGURO (PAGBANK)": {
     title: "PagSeguro/PagBank",
-    file: "/tef-hub/pagseguro-pagbank.pdf",
+    file: "pagseguro-pagbank.pdf",
     description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher. Quando visualizar essa opção, clique no link abaixo.",
     link: "https://app.pipefy.com/public/form/z7Uas1lI",
     linkLabel: "Abrir formulário Pipefy do PagBank",
@@ -114,17 +114,17 @@ const guiasPix = {
   },
   "BANCO SANTANDER": {
     title: "Banco Santander",
-    file: "/tef-hub/santander.pdf",
+    file: "santander.pdf",
     preview: true
   },
   "BANCO SICOOB": {
     title: "Banco Sicoob",
-    file: "/tef-hub/sicoob.pdf",
+    file: "sicoob.pdf",
     preview: true
   },
   "BANCO SICREDI": {
     title: "Banco Sicredi",
-    file: "/tef-hub/sicredi.pdf",
+    file: "sicredi.pdf",
     preview: true
   },
   BANRISUL: {
