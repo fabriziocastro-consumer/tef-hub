@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solicitação TEF e PIX no TEF | Consumer</title>
+  <meta name="description" content="Formulário para clientes enviarem dados de TEF e PIX no TEF à Consumer." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__content">
+      <div class="hero__top">
+        <span class="badge">Consumer</span>
+        <span class="badge badge--soft">TEF e PIX no TEF</span>
+      </div>
+      <h1>Solicitação TEF e PIX no TEF</h1>
+      <p>
+        Preencha os dados do estabelecimento para enviar as informações à equipe Consumer pelo WhatsApp.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+      <form id="tefForm" novalidate>
+        <section class="form-section">
+          <div class="section-heading">
+            <div class="section-number">1</div>
+            <div>
+              <h2>Dados do estabelecimento</h2>
+              <p>Informe os dados principais e escolha o tipo de solicitação.</p>
+            </div>
+          </div>
+
+          <div class="grid grid--2">
+            <div class="field field--full">
+              <label for="tipoSolicitacao">O que deseja configurar? *</label>
+              <select id="tipoSolicitacao" name="tipoSolicitacao" required>
+                <option value="">Selecione</option>
+                <option value="tef_pix">TEF + PIX no TEF</option>
+                <option value="tef">Somente TEF</option>
+                <option value="pix">Somente PIX no TEF (TEF já configurado)</option>
+              </select>
+              <small class="hint">Se o TEF já está configurado e você precisa apenas habilitar PIX, selecione “Somente PIX no TEF”.</small>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="razaoSocial">Razão Social *</label>
+              <input id="razaoSocial" name="razaoSocial" type="text" required />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="nomeFantasia">Nome Fantasia *</label>
+              <input id="nomeFantasia" name="nomeFantasia" type="text" required />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="cnpj">CNPJ * <span class="tooltip" tabindex="0">?</span></label>
+              <input id="cnpj" name="cnpj" type="text" inputmode="numeric" placeholder="00.000.000/0000-00" required />
+              <small class="hint">Informe o CNPJ cadastrado na area do cliente.</small>
+              <small class="tooltip-content">O CNPJ deve ser o mesmo cadastrado na area do cliente.</small>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="inscricaoEstadual">Inscrição Estadual</label>
+              <input id="inscricaoEstadual" name="inscricaoEstadual" type="text" placeholder="Isento ou número da IE" />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="proprietario">Nome do proprietário *</label>
+              <input id="proprietario" name="proprietario" type="text" required />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="cpf">CPF *</label>
+              <input id="cpf" name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" required />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="email">E-mail *</label>
+              <input id="email" name="email" type="email" required />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="telefone">Telefone *</label>
+              <input id="telefone" name="telefone" type="tel" inputmode="tel" placeholder="(11) 99999-9999" required />
+              <small class="error"></small>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section" data-tef-section>
+          <div class="section-heading">
+            <div class="section-number">2</div>
+            <div>
+              <h2>Dados do TEF</h2>
+              <p>Preencha estes campos quando a solicitação envolver TEF.</p>
+            </div>
+          </div>
+
+          <div class="grid adquirente-grid">
+            <div class="field">
+              <label for="adquirente">Adquirente afiliada *</label>
+              <select id="adquirente" name="adquirente" required>
+                <option value="">Selecione</option>
+                <option value="REDE">REDE</option>
+                <option value="CIELO">CIELO</option>
+                <option value="STONE">STONE</option>
+                <option value="VERO / BANRISUL">VERO / BANRISUL</option>
+                <option value="SICREDI">SICREDI</option>
+                <option value="SIPAG / SICOOB">SIPAG / SICOOB</option>
+                <option value="PAGSEGURO">PAGSEGURO</option>
+                <option value="GETNET">GETNET</option>
+              </select>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="numeroRede">Número rede/código cadastrado</label>
+              <input id="numeroRede" name="numeroRede" type="text" />
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="numeroLogico" id="numeroLogicoLabel">Número lógico *</label>
+              <input id="numeroLogico" name="numeroLogico" type="text" required />
+              <small class="hint strong-hint" id="adquirenteHint">Selecione a adquirente para ver a métrica obrigatória.</small>
+              <small class="error"></small>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-icon">✓</div>
+            <div>
+              <strong>Métrica obrigatória</strong>
+              <span id="adquirenteRuleText">Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section" data-tef-section>
+          <div class="section-heading">
+            <div class="section-number">3</div>
+            <div>
+              <h2>Dados do PINPAD</h2>
+              <p>Selecione a marca e o modelo usados no estabelecimento.</p>
+            </div>
+          </div>
+
+          <div class="grid pinpad-grid">
+            <div class="field">
+              <label for="pinpadMarca">Marca do PINPAD *</label>
+              <select id="pinpadMarca" name="pinpadMarca" required>
+                <option value="">Selecione</option>
+                <option value="Gertec">Gertec</option>
+                <option value="Ingênico">Ingênico</option>
+                <option value="Verifone">Verifone</option>
+              </select>
+              <small class="hint">Escolha a marca para carregar os modelos aceitos.</small>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="pinpadModelo">Modelo do PINPAD * <span class="tooltip" tabindex="0">?</span></label>
+              <select id="pinpadModelo" name="pinpadModelo" required>
+                <option value="">Selecione primeiro a marca</option>
+              </select>
+              <small class="hint" id="modeloHint">Modelos aceitos serão exibidos conforme a marca.</small>
+              <small class="tooltip-content">
+Modelos aceitos:
+Gertec: PPC920, PPC930, MP15
+Ingênico: iPP320, Lane 3000
+Verifone: VX800, VX820, P200
+              </small>
+              <small class="error"></small>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section hidden" id="pixFormSection">
+          <div class="section-heading">
+            <div class="section-number">4</div>
+            <div>
+              <h2>Dados do PIX no TEF</h2>
+              <p>Informe apenas os dados solicitados para o banco escolhido.</p>
+            </div>
+          </div>
+
+          <div id="pixSection" class="pix-box">
+            <div class="field">
+              <label for="bancoPix">Banco PIX *</label>
+              <select id="bancoPix" name="bancoPix">
+                <option value="">Selecione</option>
+                <option value="BANCO DO BRASIL">BANCO DO BRASIL</option>
+                <option value="BANCO DO NORDESTE">BANCO DO NORDESTE</option>
+                <option value="BANCO BRADESCO">BANCO BRADESCO</option>
+                <option value="BANCO ITAU">BANCO ITAÚ</option>
+                <option value="BANCO MERCADO PAGO">BANCO MERCADO PAGO</option>
+                <option value="BANCO PAGSEGURO (PAGBANK)">BANCO PAGSEGURO (PAGBANK)</option>
+                <option value="BANCO SANTANDER">BANCO SANTANDER</option>
+                <option value="BANCO SICOOB">BANCO SICOOB</option>
+                <option value="BANCO SICREDI">BANCO SICREDI</option>
+                <option value="BANRISUL">BANRISUL</option>
+              </select>
+              <small class="hint" id="bancoHint">Selecione o banco para carregar os campos obrigatórios.</small>
+              <small class="error"></small>
+            </div>
+
+            <aside class="pdf-guide hidden" id="bankPdfGuide" aria-live="polite">
+              <div class="pdf-guide__head">
+                <div>
+                  <strong id="bankPdfTitle">Passo a passo do banco</strong>
+                  <p id="bankPdfText">Baixe o PDF para gerar as credenciais.</p>
+                </div>
+                <div class="pdf-guide__actions" id="bankPdfActions">
+                  <a class="btn btn--secondary" id="bankPdfDownload" href="#" download>Baixar PDF para gerar credenciais</a>
+                  <a class="btn btn--secondary" id="bankPdfExternal" href="#" target="_blank" rel="noopener noreferrer" hidden>Abrir orientação</a>
+                </div>
+              </div>
+              <iframe id="bankPdfPreview" class="pdf-guide__preview" title="Pré-visualização do passo a passo em PDF"></iframe>
+            </aside>
+
+            <div id="pixDynamicFields" class="grid grid--2"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div class="section-number">5</div>
+            <div>
+              <h2>Observações e confirmação</h2>
+              <p>Revise os dados antes de abrir o WhatsApp.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="observacoes">Observações adicionais</label>
+            <textarea id="observacoes" name="observacoes" rows="4" placeholder="Ex.: melhor horário para contato ou informação adicional da adquirente/banco."></textarea>
+          </div>
+
+          <label class="check">
+            <input id="confirmacao" name="confirmacao" type="checkbox" required />
+            <span>Confirmo que as informações foram conferidas e estão corretas.</span>
+          </label>
+          <small class="error" id="confirmacaoError"></small>
+        </section>
+
+        <aside class="summary">
+          <div class="summary__head">
+            <div>
+              <h2>Resumo para WhatsApp</h2>
+              <p>Confira os dados antes do envio.</p>
+            </div>
+          </div>
+          <pre id="summaryText">Preencha o formulário para gerar o resumo.</pre>
+        </aside>
+
+        <div class="actions actions--single">
+          <button type="button" class="btn btn--primary" id="sendInfoBtn" hidden>Enviar informações</button>
+          <p class="send-hint" id="sendHint">Complete os campos obrigatórios para liberar o envio.</p>
+        </div>
+
+        <div class="notice" id="notice" hidden></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Formulário para envio das informações de TEF/PIX à Consumer</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
