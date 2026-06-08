@@ -81,7 +81,7 @@ const regrasPix = {
 const guiasPix = {
   "BANCO DO BRASIL": {
     title: "Banco do Brasil",
-    file: "banco-do-brasil.pdf",
+    file: "/tef-hub/banco-do-brasil.pdf",
     preview: true
   },
   "BANCO DO NORDESTE": {
