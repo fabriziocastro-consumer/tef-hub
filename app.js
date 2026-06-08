@@ -81,43 +81,43 @@ const regrasPix = {
 const guiasPix = {
   "BANCO DO BRASIL": {
     title: "Banco do Brasil",
-    file: "pdfs/banco-do-brasil.pdf",
+    file: "banco-do-brasil.pdf",
     preview: true
   },
   "BANCO DO NORDESTE": {
     title: "Banco do Nordeste",
-    file: "pdfs/banco-do-nordeste.pdf"
+    file: "banco-do-nordeste.pdf"
   },
   "BANCO BRADESCO": {
     title: "Banco Bradesco",
-    file: "pdfs/banco-bradesco.pdf"
+    file: "banco-bradesco.pdf"
   },
   "BANCO ITAU": {
     title: "Banco Itaú",
-    file: "pdfs/banco-itau.pdf"
+    file: "banco-itau.pdf"
   },
   "BANCO MERCADO PAGO": {
     title: "Banco Mercado Pago",
-    file: "pdfs/mercado-pago.pdf"
+    file: "mercado-pago.pdf"
   },
   "BANCO PAGSEGURO (PAGBANK)": {
     title: "PagSeguro/PagBank",
-    file: "pdfs/pagseguro-pagbank.pdf",
+    file: "pagseguro-pagbank.pdf",
     description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher. Quando visualizar essa opção, clique no link abaixo.",
     link: "https://app.pipefy.com/public/form/z7Uas1lI",
     linkLabel: "Abrir formulário Pipefy do PagBank"
   },
   "BANCO SANTANDER": {
     title: "Banco Santander",
-    file: "pdfs/santander.pdf"
+    file: "santander.pdf"
   },
   "BANCO SICOOB": {
     title: "Banco Sicoob",
-    file: "pdfs/sicoob.pdf"
+    file: "sicoob.pdf"
   },
   "BANCO SICREDI": {
     title: "Banco Sicredi",
-    file: "pdfs/sicredi.pdf"
+    file: "sicredi.pdf"
   },
   BANRISUL: {
     title: "Banrisul",
