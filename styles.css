@@ -1,6 +1,8 @@
 :root {
   --primary: #183c63;
   --primary-dark: #0d2742;
+  --consumer-red: #e30613;
+  --consumer-red-dark: #9f111b;
   --accent: #15803d;
   --accent-dark: #11632f;
   --secondary: #0ea5e9;
@@ -16,7 +18,9 @@
   --shadow: 0 12px 30px rgba(23, 32, 51, 0.10);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html,
 body {
@@ -31,7 +35,9 @@ body {
 }
 
 .hero {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 32%),
+    linear-gradient(135deg, var(--consumer-red), var(--consumer-red-dark));
   color: white;
   padding: 34px 20px 64px;
 }
@@ -59,7 +65,7 @@ body {
 }
 
 .badge--soft {
-  background: rgba(14, 165, 233, 0.22);
+  background: rgba(255, 255, 255, 0.20);
 }
 
 h1 {
@@ -72,7 +78,7 @@ h1 {
 .hero p {
   max-width: 760px;
   margin: 14px 0 0;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.90);
   font-size: 17px;
   line-height: 1.55;
 }
@@ -99,18 +105,22 @@ h1 {
 .progress__bar {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--secondary));
+  background: linear-gradient(90deg, var(--consumer-red), var(--secondary));
   transition: width 0.25s ease;
 }
 
-form { padding: 30px; }
+form {
+  padding: 30px;
+}
 
 .form-section {
   padding: 26px 0;
   border-bottom: 1px solid var(--border);
 }
 
-.form-section:first-of-type { padding-top: 0; }
+.form-section:first-of-type {
+  padding-top: 0;
+}
 
 .section-heading {
   display: flex;
@@ -127,7 +137,7 @@ form { padding: 30px; }
   display: grid;
   place-items: center;
   color: white;
-  background: var(--primary);
+  background: var(--consumer-red);
   font-weight: 900;
 }
 
@@ -152,9 +162,13 @@ form { padding: 30px; }
   gap: 16px;
 }
 
-.grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
-.field--full { grid-column: 1 / -1; }
+.field--full {
+  grid-column: 1 / -1;
+}
 
 .adquirente-grid {
   grid-template-columns: 1fr 1fr 1.15fr;
@@ -194,10 +208,12 @@ textarea {
   color: var(--text);
   background: white;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-textarea { resize: vertical; }
+textarea {
+  resize: vertical;
+}
 
 input:hover,
 select:hover,
@@ -212,6 +228,14 @@ textarea:focus {
   box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.16);
 }
 
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
 .hint {
   color: var(--muted);
   font-size: 12px;
@@ -220,6 +244,17 @@ textarea:focus {
 
 .strong-hint {
   color: var(--primary);
+  font-weight: 800;
+}
+
+.warning-hint {
+  display: block;
+  margin-top: 0.4rem;
+  padding: 0.75rem;
+  border: 1px solid #f59e0b;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #92400e;
   font-weight: 800;
 }
 
@@ -234,6 +269,7 @@ textarea:focus {
 .field.invalid select,
 .field.invalid textarea {
   border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.10);
 }
 
 .rule-card {
@@ -384,13 +420,13 @@ textarea:focus {
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(21, 128, 61, 0.22);
+  box-shadow: 0 10px 20px rgba(227, 6, 19, 0.22);
 }
 
 .btn--primary {
   width: 100%;
   color: white;
-  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  background: linear-gradient(135deg, var(--consumer-red), var(--consumer-red-dark));
 }
 
 .btn--secondary {
@@ -498,13 +534,17 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
-  form { padding: 22px; }
+  form {
+    padding: 22px;
+  }
 
   .section-heading {
     gap: 10px;
   }
 
-  .btn { width: 100%; }
+  .btn {
+    width: 100%;
+  }
 
   .pdf-guide__head {
     flex-direction: column;

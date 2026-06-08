@@ -16,8 +16,8 @@ const regrasAdquirentes = {
   },
   CIELO: {
     label: "Número lógico",
-    ruleText: "CIELO: número lógico obrigatório com exatamente 9 dígitos numéricos. Ex.: 123456789.",
-    hint: "Obrigatório: 9 dígitos numéricos. Ex.: 123456789.",
+    ruleText: "CIELO: número lógico obrigatório com exatamente 9 dígitos numéricos. Ex: 12345678-9.",
+    hint: "Obrigatório: 9 dígitos numéricos. Ex: 12345678-9.",
     validate: (v) => /^\d{9}$/.test(v),
     error: "Para CIELO, informe exatamente 9 dígitos numéricos."
   },
@@ -196,7 +196,66 @@ const sendInfoBtn = document.querySelector("#sendInfoBtn");
 const sendHint = document.querySelector("#sendHint");
 const notice = document.querySelector("#notice");
 
+let pinpadModeloOutro = null;
+
 const onlyDigits = (value) => value.replace(/\D/g, "");
+
+function ensureOutroOption() {
+  if (!pinpadMarca) return;
+
+  const hasOutro = Array.from(pinpadMarca.options).some((option) => option.value === "Outro");
+
+  if (!hasOutro) {
+    const option = document.createElement("option");
+    option.value = "Outro";
+    option.textContent = "Outro";
+    pinpadMarca.appendChild(option);
+  }
+}
+
+function ensurePinpadOutroField() {
+  if (!pinpadModelo) return;
+
+  const modeloField = pinpadModelo.closest(".field");
+  if (!modeloField) return;
+
+  let existingInput = document.querySelector("#pinpadModeloOutro");
+
+  if (!existingInput) {
+    existingInput = document.createElement("input");
+    existingInput.id = "pinpadModeloOutro";
+    existingInput.name = "pinpadModeloOutro";
+    existingInput.type = "text";
+    existingInput.placeholder = "Digite o modelo do PINPAD";
+    existingInput.className = "hidden";
+
+    pinpadModelo.insertAdjacentElement("afterend", existingInput);
+  }
+
+  let existingWarning = document.querySelector("#pinpadOutroWarning");
+
+  if (!existingWarning) {
+    existingWarning = document.createElement("small");
+    existingWarning.id = "pinpadOutroWarning";
+    existingWarning.className = "hint warning-hint hidden";
+    existingWarning.textContent = "Você selecionou um modelo não homologado. Pode ser que o TEF não suporte esse modelo.";
+
+    existingInput.insertAdjacentElement("afterend", existingWarning);
+  }
+
+  pinpadModeloOutro = existingInput;
+
+  if (!pinpadModeloOutro.dataset.listenerAdded) {
+    pinpadModeloOutro.addEventListener("input", () => {
+      validateField(pinpadModeloOutro);
+      updateProgress();
+      updateSummary();
+      updateSubmitState();
+    });
+
+    pinpadModeloOutro.dataset.listenerAdded = "true";
+  }
+}
 
 function maskCnpj(value) {
   const v = onlyDigits(value).slice(0, 14);
@@ -217,18 +276,22 @@ function maskCpf(value) {
 
 function maskPhone(value) {
   const v = onlyDigits(value).slice(0, 11);
+
   if (v.length <= 10) {
     return v.replace(/^(\d{2})(\d)/, "($1) $2").replace(/(\d{4})(\d)/, "$1-$2");
   }
+
   return v.replace(/^(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 document.querySelector("#cnpj").addEventListener("input", (e) => {
   e.target.value = maskCnpj(e.target.value);
 });
+
 document.querySelector("#cpf").addEventListener("input", (e) => {
   e.target.value = maskCpf(e.target.value);
 });
+
 document.querySelector("#telefone").addEventListener("input", (e) => {
   e.target.value = maskPhone(e.target.value);
 });
@@ -236,28 +299,36 @@ document.querySelector("#telefone").addEventListener("input", (e) => {
 function isValidCpf(cpf) {
   cpf = onlyDigits(cpf);
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
   let sum = 0;
   for (let i = 0; i < 9; i++) sum += Number(cpf[i]) * (10 - i);
+
   let digit = 11 - (sum % 11);
   if (digit >= 10) digit = 0;
   if (digit !== Number(cpf[9])) return false;
+
   sum = 0;
   for (let i = 0; i < 10; i++) sum += Number(cpf[i]) * (11 - i);
+
   digit = 11 - (sum % 11);
   if (digit >= 10) digit = 0;
+
   return digit === Number(cpf[10]);
 }
 
 function isValidCnpj(cnpj) {
   cnpj = onlyDigits(cnpj);
   if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
   const calc = (base, weights) => {
     const sum = base.split("").reduce((acc, digit, i) => acc + Number(digit) * weights[i], 0);
     const rest = sum % 11;
     return rest < 2 ? 0 : 11 - rest;
   };
+
   const d1 = calc(cnpj.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
   const d2 = calc(cnpj.slice(0, 12) + d1, [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+
   return d1 === Number(cnpj[12]) && d2 === Number(cnpj[13]);
 }
 
@@ -278,19 +349,26 @@ function dataNeedsPix(data) {
 }
 
 function setError(input, message) {
+  if (!input) return;
+
   const field = input.closest(".field") || input.parentElement;
-  const error = field.querySelector(".error");
-  field.classList.toggle("invalid", Boolean(message));
+  const error = field?.querySelector(".error");
+
+  if (field) field.classList.toggle("invalid", Boolean(message));
   if (error) error.textContent = message || "";
 }
 
 function clearField(input) {
+  if (!input) return;
+
   input.value = "";
   input.required = false;
   setError(input, "");
 }
 
 function clearCheckbox(input) {
+  if (!input) return;
+
   input.checked = false;
   input.required = false;
   setError(input, "");
@@ -351,6 +429,7 @@ function updatePixGuide(banco) {
 
 function updateEstabelecimentoVisibility() {
   const pixOnly = tipoSolicitacao.value === "pix";
+
   const fieldsToHideForPixOnly = [
     "razaoSocial",
     "nomeFantasia",
@@ -360,6 +439,7 @@ function updateEstabelecimentoVisibility() {
     "email",
     "telefone"
   ];
+
   const requiredWhenNotPixOnly = [
     "razaoSocial",
     "nomeFantasia",
@@ -386,6 +466,7 @@ function updateEstabelecimentoVisibility() {
   });
 
   const cnpj = document.getElementById("cnpj");
+
   if (cnpj) {
     cnpj.required = true;
     cnpj.closest(".field")?.classList.remove("hidden");
@@ -398,17 +479,32 @@ function updateRequestVisibility() {
 
   tefSections.forEach((section) => section.classList.toggle("hidden", !showTef));
   pixFormSection.classList.toggle("hidden", !showPix);
+
   updateEstabelecimentoVisibility();
   updateSectionNumbers();
 
-  [adquirente, numeroLogico, pinpadMarca, pinpadModelo].forEach((input) => {
+  [adquirente, numeroLogico, pinpadMarca].forEach((input) => {
     input.required = showTef;
   });
+
   bancoPix.required = showPix;
 
   if (!showTef) {
-    [adquirente, numeroLogico, pinpadMarca, pinpadModelo].forEach(clearField);
+    [adquirente, numeroLogico, pinpadMarca, pinpadModelo, pinpadModeloOutro].forEach(clearField);
+
     pinpadModelo.innerHTML = '<option value="">Selecione primeiro a marca</option>';
+    pinpadModelo.disabled = false;
+    pinpadModelo.classList.remove("hidden");
+
+    if (pinpadModeloOutro) {
+      pinpadModeloOutro.classList.add("hidden");
+      pinpadModeloOutro.disabled = true;
+      pinpadModeloOutro.required = false;
+    }
+
+    const warning = document.querySelector("#pinpadOutroWarning");
+    if (warning) warning.classList.add("hidden");
+
     modeloHint.textContent = "Modelos aceitos serão exibidos conforme a marca.";
     numeroLogicoLabel.textContent = "Número lógico *";
     adquirenteHint.textContent = "Selecione a adquirente.";
@@ -436,9 +532,11 @@ function updateRequestVisibility() {
 
 function updateSectionNumbers() {
   let visibleIndex = 1;
+
   document.querySelectorAll(".form-section").forEach((section) => {
     const number = section.querySelector(".section-number");
     if (!number || section.classList.contains("hidden")) return;
+
     number.textContent = visibleIndex;
     visibleIndex += 1;
   });
@@ -459,33 +557,82 @@ function updateAdquirenteRule() {
   numeroLogicoLabel.textContent = `${regra.label} *`;
   adquirenteHint.textContent = regra.hint;
   adquirenteRuleText.textContent = regra.ruleText;
+
   validateField(numeroLogico);
   updateSummary();
 }
 
 function updatePinpadModels() {
+  ensurePinpadOutroField();
+
   pinpadModelo.innerHTML = "";
+
   const marca = pinpadMarca.value;
+  const isOutro = marca === "Outro";
   const modelos = modelosPinpad[marca] || [];
+  const warning = document.querySelector("#pinpadOutroWarning");
 
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.textContent = modelos.length ? "Selecione o modelo" : "Selecione primeiro a marca";
-  pinpadModelo.appendChild(defaultOption);
+  if (isOutro) {
+    pinpadModelo.classList.add("hidden");
+    pinpadModelo.disabled = true;
+    pinpadModelo.required = false;
+    pinpadModelo.value = "";
+    setError(pinpadModelo, "");
 
-  modelos.forEach((modelo) => {
-    const option = document.createElement("option");
-    option.value = modelo;
-    option.textContent = modelo;
-    pinpadModelo.appendChild(option);
-  });
+    if (pinpadModeloOutro) {
+      pinpadModeloOutro.classList.remove("hidden");
+      pinpadModeloOutro.disabled = false;
+      pinpadModeloOutro.required = needsTef();
+    }
 
-  modeloHint.textContent = modelos.length
-    ? `Modelos aceitos para ${marca}: ${modelos.join(", ")}.`
-    : "Modelos aceitos serão exibidos conforme a marca.";
+    if (warning) {
+      warning.classList.remove("hidden");
+    }
 
-  validateField(pinpadModelo);
+    modeloHint.textContent = "Digite manualmente o modelo do PINPAD.";
+  } else {
+    pinpadModelo.classList.remove("hidden");
+    pinpadModelo.disabled = false;
+    pinpadModelo.required = needsTef();
+
+    if (pinpadModeloOutro) {
+      pinpadModeloOutro.classList.add("hidden");
+      pinpadModeloOutro.disabled = true;
+      pinpadModeloOutro.required = false;
+      pinpadModeloOutro.value = "";
+      setError(pinpadModeloOutro, "");
+    }
+
+    if (warning) {
+      warning.classList.add("hidden");
+    }
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = modelos.length ? "Selecione o modelo" : "Selecione primeiro a marca";
+    pinpadModelo.appendChild(defaultOption);
+
+    modelos.forEach((modelo) => {
+      const option = document.createElement("option");
+      option.value = modelo;
+      option.textContent = modelo;
+      pinpadModelo.appendChild(option);
+    });
+
+    modeloHint.textContent = modelos.length
+      ? `Modelos aceitos para ${marca}: ${modelos.join(", ")}.`
+      : "Modelos aceitos serão exibidos conforme a marca.";
+  }
+
+  if (isOutro && pinpadModeloOutro) {
+    validateField(pinpadModeloOutro);
+  } else {
+    validateField(pinpadModelo);
+  }
+
+  updateProgress();
   updateSummary();
+  updateSubmitState();
 }
 
 function toFieldKey(campo) {
@@ -499,8 +646,10 @@ function toFieldKey(campo) {
 
 function createPixFields() {
   pixDynamicFields.innerHTML = "";
+
   const banco = bancoPix.value;
   const campos = regrasPix[banco] || [];
+
   updatePixGuide(banco);
 
   bancoHint.textContent = campos.length
@@ -524,6 +673,7 @@ function createPixFields() {
       `;
     } else {
       const isCnpj = campo.toLowerCase() === "cnpj";
+
       wrapper.className = "field";
       wrapper.innerHTML = `
         <label for="pix_${key}">${campo} *</label>
@@ -540,7 +690,7 @@ function createPixFields() {
 }
 
 function getFieldError(input) {
-  if (input.closest(".hidden")) {
+  if (!input || input.closest(".hidden")) {
     return "";
   }
 
@@ -570,18 +720,31 @@ function getFieldError(input) {
     if (!needsTef()) return "";
 
     const regra = regrasAdquirentes[adquirente.value];
+
     if (!regra) {
       return "Selecione a adquirente antes de preencher.";
     }
+
     if (!regra.validate(value)) {
       return regra.error;
     }
   }
 
-  if (input.id === "pinpadModelo" && value && pinpadMarca.value) {
+  if (input.id === "pinpadModelo" && needsTef() && pinpadMarca.value !== "Outro") {
+    if (!value) {
+      return "Selecione o modelo do PINPAD.";
+    }
+
     const modelos = modelosPinpad[pinpadMarca.value] || [];
+
     if (!modelos.includes(value)) {
       return "Selecione um modelo aceito para esta marca.";
+    }
+  }
+
+  if (input.id === "pinpadModeloOutro" && needsTef() && pinpadMarca.value === "Outro") {
+    if (!value) {
+      return "Informe o modelo do PINPAD.";
     }
   }
 
@@ -616,7 +779,13 @@ function getRequiredIds() {
   }
 
   if (needsTef()) {
-    requiredIds.push("adquirente", "numeroLogico", "pinpadMarca", "pinpadModelo");
+    requiredIds.push("adquirente", "numeroLogico", "pinpadMarca");
+
+    if (pinpadMarca.value === "Outro") {
+      requiredIds.push("pinpadModeloOutro");
+    } else {
+      requiredIds.push("pinpadModelo");
+    }
   }
 
   if (needsPix()) {
@@ -631,17 +800,25 @@ function validateForm() {
 
   getRequiredIds().forEach((id) => {
     const input = document.getElementById(id);
+
     if (!input || input.closest(".hidden")) return;
+
     input.required = true;
-    if (!validateField(input)) valid = false;
+
+    if (!validateField(input)) {
+      valid = false;
+    }
   });
 
   document.querySelectorAll("#pixDynamicFields input").forEach((input) => {
-    if (!validateField(input)) valid = false;
+    if (!validateField(input)) {
+      valid = false;
+    }
   });
 
   const confirmacao = document.querySelector("#confirmacao");
   const confirmacaoError = document.querySelector("#confirmacaoError");
+
   if (!confirmacao.checked) {
     confirmacaoError.textContent = "Confirme as informações antes de enviar.";
     valid = false;
@@ -652,24 +829,14 @@ function validateForm() {
   return valid;
 }
 
-function isFormComplete() {
-  const requiredFieldsAreValid = getRequiredIds().every((id) => {
-    const input = document.getElementById(id);
-    return input && (input.closest(".hidden") || !getFieldError(input));
-  });
-
-  if (!requiredFieldsAreValid) return false;
-
-  const pixFieldsAreValid = Array.from(document.querySelectorAll("#pixDynamicFields input"))
-    .every((input) => !input.closest(".hidden") && !getFieldError(input));
-
-  return pixFieldsAreValid && document.querySelector("#confirmacao").checked;
-}
-
 function updateSubmitState() {
-  const ready = isFormComplete();
-  sendInfoBtn.hidden = !ready;
-  sendHint.hidden = ready;
+  sendInfoBtn.hidden = false;
+  sendInfoBtn.disabled = false;
+
+  if (sendHint) {
+    sendHint.hidden = true;
+    sendHint.textContent = "";
+  }
 }
 
 function getFormData() {
@@ -686,6 +853,7 @@ function getFormData() {
   });
 
   data.pixCampos = pixCampos;
+
   return data;
 }
 
@@ -697,14 +865,17 @@ function maskSensitive(label, value) {
   if (/secret\s*_?\s*id/i.test(label)) return value;
 
   const isSensitive = /secret|token|key|certificado|private/i.test(label);
+
   if (!isSensitive) return value;
   if (value.length <= 4) return "informado";
+
   return `${"*".repeat(Math.max(value.length - 4, 8))}${value.slice(-4)}`;
 }
 
 function addLine(lines, label, value, options = {}) {
   const clean = String(value || "").trim();
   if (!clean && !options.always) return;
+
   lines.push(`${label}: ${clean}`);
 }
 
@@ -712,7 +883,9 @@ function hasAnyFormValue(data) {
   const baseHasValue = Object.entries(data).some(([key, value]) => {
     return key !== "pixCampos" && typeof value === "string" && value.trim();
   });
+
   const pixHasValue = Object.values(data.pixCampos || {}).some((value) => String(value || "").trim());
+
   return baseHasValue || pixHasValue;
 }
 
@@ -720,7 +893,6 @@ function buildSummary(data, mask = true) {
   const regra = regrasAdquirentes[data.adquirente];
   const lines = [];
 
-  lines.push("SOLICITAÇÃO DE TEF / PIX NO TEF");
   addLine(lines, "Tipo de solicitação", tiposSolicitacao[data.tipoSolicitacao]);
 
   lines.push("");
@@ -739,7 +911,7 @@ function buildSummary(data, mask = true) {
 
   if (dataNeedsTef(data)) {
     lines.push("");
-    lines.push("DADOS DO TEF");
+    lines.push("DADOS DA ADQUIRENTE");
     addLine(lines, "Adquirente afiliada", data.adquirente);
     addLine(lines, "Número rede/código cadastrado", data.numeroRede);
     addLine(lines, regra?.label || "Número lógico", data.numeroLogico);
@@ -747,13 +919,19 @@ function buildSummary(data, mask = true) {
     lines.push("");
     lines.push("DADOS DO PINPAD");
     addLine(lines, "Marca", data.pinpadMarca);
-    addLine(lines, "Modelo", data.pinpadModelo);
+
+    if (data.pinpadMarca === "Outro") {
+      addLine(lines, "Modelo", data.pinpadModeloOutro);
+      lines.push("Aviso: Estou ciente que o modelo do Pinpad não é um modelo homologado");
+    } else {
+      addLine(lines, "Modelo", data.pinpadModelo);
+    }
   }
 
   if (dataNeedsPix(data)) {
     lines.push("");
     lines.push("PIX NO TEF");
-    addLine(lines, "Banco:", data.bancoPix);
+    addLine(lines, "Banco", data.bancoPix);
 
     Object.entries(data.pixCampos || {}).forEach(([key, value]) => {
       addLine(lines, key, mask ? maskSensitive(key, value) : value);
@@ -771,6 +949,7 @@ function buildSummary(data, mask = true) {
 
 function updateSummary() {
   const data = getFormData();
+
   summaryText.textContent = hasAnyFormValue(data)
     ? buildSummary(data, true)
     : "Preencha o formulário para gerar o resumo.";
@@ -782,6 +961,7 @@ function updateProgress() {
 
   const filled = fields.filter((el) => el.value.trim()).length;
   const pct = fields.length ? Math.round((filled / fields.length) * 100) : 0;
+
   progressBar.style.width = `${pct}%`;
 }
 
@@ -794,18 +974,44 @@ function showNotice(message, type = "success") {
 function openWhatsApp(text) {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
   const opened = window.open(url, "_blank", "noopener,noreferrer");
-  if (!opened) window.location.href = url;
+
+  if (!opened) {
+    window.location.href = url;
+  }
+}
+
+function focusFirstInvalidField() {
+  const firstInvalidInput = form.querySelector(
+    ".field.invalid input, .field.invalid select, .field.invalid textarea"
+  );
+
+  if (firstInvalidInput) {
+    firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstInvalidInput.focus();
+    return;
+  }
+
+  const confirmacao = document.querySelector("#confirmacao");
+  const confirmacaoError = document.querySelector("#confirmacaoError");
+
+  if (confirmacaoError && confirmacaoError.textContent.trim()) {
+    confirmacao.scrollIntoView({ behavior: "smooth", block: "center" });
+    confirmacao.focus();
+  }
 }
 
 sendInfoBtn.addEventListener("click", () => {
   if (!validateForm()) {
-    showNotice("Corrija os campos destacados antes de enviar as informações.", "error");
+    showNotice("Preencha todos os campos obrigatórios corretamente antes de enviar.", "error");
+    focusFirstInvalidField();
+    updateSummary();
     updateSubmitState();
     return;
   }
 
   const data = getFormData();
   const text = buildSummary(data, false);
+
   openWhatsApp(text);
   showNotice("WhatsApp aberto com a mensagem pronta para envio.", "success");
 });
@@ -842,6 +1048,8 @@ form.addEventListener("change", (event) => {
   updateSubmitState();
 });
 
+ensureOutroOption();
+ensurePinpadOutroField();
 updateAdquirenteRule();
 updatePinpadModels();
 updateRequestVisibility();
