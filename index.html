@@ -10,7 +10,6 @@
 <body>
   <header class="hero">
     <div class="hero__content">
-
       <h1>Homologação TEF Consumer</h1>
       <p>
         Preencha os dados do estabelecimento para enviar as informações à equipe Consumer pelo WhatsApp.
@@ -41,7 +40,7 @@
                 <option value="tef">Configurar somente crédito e débito</option>
                 <option value="pix">Configurar somente PIX</option>
               </select>
-              <small class="hint">Se o TEF já está configurado para cartão de credito e debito e você precisa apenas habilitar PIX, selecione “Configurar somente PIX”.</small>
+              <small class="hint">Se o TEF já está configurado para cartão de crédito e débito e você precisa apenas habilitar PIX, selecione “Configurar somente PIX”.</small>
               <small class="error"></small>
             </div>
 
@@ -60,8 +59,8 @@
             <div class="field">
               <label for="cnpj">CNPJ * <span class="tooltip" tabindex="0">?</span></label>
               <input id="cnpj" name="cnpj" type="text" inputmode="numeric" placeholder="00.000.000/0000-00" required />
-              <small class="hint">Informe o CNPJ cadastrado na area do cliente.</small>
-              <small class="tooltip-content">O CNPJ deve ser o mesmo cadastrado na area do cliente.</small>
+              <small class="hint">Informe o CNPJ cadastrado na área do cliente.</small>
+              <small class="tooltip-content">O CNPJ deve ser o mesmo cadastrado na área do cliente.</small>
               <small class="error"></small>
             </div>
 
@@ -102,7 +101,7 @@
             <div class="section-number">2</div>
             <div>
               <h2>Dados da Adquirente</h2>
-              <p>Preencha todos os campos abaixo com as informaçoes fornecidas pela adquirente</p>
+              <p>Preencha todos os campos abaixo com as informações fornecidas pela adquirente.</p>
             </div>
           </div>
 
@@ -182,6 +181,13 @@ Verifone: VX800, VX820, P200
               </small>
               <small class="error"></small>
             </div>
+
+            <div class="field">
+              <label for="quantidadeTerminais">Quantos terminais deseja utilizar? *</label>
+              <input id="quantidadeTerminais" name="quantidadeTerminais" type="number" min="1" step="1" value="1" required />
+              <small class="hint">Informe a quantidade de terminais PINPAD que serão utilizados.</small>
+              <small class="error"></small>
+            </div>
           </div>
         </section>
 
@@ -236,32 +242,15 @@ Verifone: VX800, VX820, P200
           <div class="section-heading">
             <div class="section-number">5</div>
             <div>
-              <h2>Observações e confirmação</h2>
-              <p>Revise os dados antes de abrir o WhatsApp.</p>
+              <h2>Observações</h2>
             </div>
           </div>
 
           <div class="field">
             <label for="observacoes">Observações adicionais</label>
-            <textarea id="observacoes" name="observacoes" rows="4" placeholder="Ex.: melhor horário para contato ou informação adicional da adquirente/banco."></textarea>
+            <textarea id="observacoes" name="observacoes" rows="4"></textarea>
           </div>
-
-          <label class="check">
-            <input id="confirmacao" name="confirmacao" type="checkbox" required />
-            <span>Confirmo que as informações foram conferidas e estão corretas.</span>
-          </label>
-          <small class="error" id="confirmacaoError"></small>
         </section>
-
-        <aside class="summary">
-          <div class="summary__head">
-            <div>
-              <h2>Resumo para WhatsApp</h2>
-              <p>Confira os dados antes do envio.</p>
-            </div>
-          </div>
-          <pre id="summaryText">Preencha o formulário para gerar o resumo.</pre>
-        </aside>
 
         <div class="actions actions--single">
           <button type="button" class="btn btn--primary" id="sendInfoBtn" hidden>Enviar informações</button>

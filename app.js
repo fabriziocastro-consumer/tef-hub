@@ -107,7 +107,7 @@ const guiasPix = {
   "BANCO PAGSEGURO (PAGBANK)": {
     title: "PagSeguro/PagBank",
     file: "pagseguro-pagbank.pdf",
-    description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher, quando visualizar essa opção clique no botão Abrir formulário do PagBank ",
+    description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher, quando visualizar essa opção clique no botão Abrir formulário do PagBank.",
     link: "https://app.pipefy.com/public/form/z7Uas1lI",
     linkLabel: "Abrir formulário do PagBank",
     preview: true
@@ -180,6 +180,7 @@ const adquirenteHint = document.querySelector("#adquirenteHint");
 const adquirenteRuleText = document.querySelector("#adquirenteRuleText");
 const pinpadMarca = document.querySelector("#pinpadMarca");
 const pinpadModelo = document.querySelector("#pinpadModelo");
+const quantidadeTerminais = document.querySelector("#quantidadeTerminais");
 const modeloHint = document.querySelector("#modeloHint");
 const bancoPix = document.querySelector("#bancoPix");
 const bancoHint = document.querySelector("#bancoHint");
@@ -191,7 +192,6 @@ const bankPdfDownload = document.querySelector("#bankPdfDownload");
 const bankPdfExternal = document.querySelector("#bankPdfExternal");
 const bankPdfPreview = document.querySelector("#bankPdfPreview");
 const pixDynamicFields = document.querySelector("#pixDynamicFields");
-const summaryText = document.querySelector("#summaryText");
 const sendInfoBtn = document.querySelector("#sendInfoBtn");
 const sendHint = document.querySelector("#sendHint");
 const notice = document.querySelector("#notice");
@@ -249,7 +249,6 @@ function ensurePinpadOutroField() {
     pinpadModeloOutro.addEventListener("input", () => {
       validateField(pinpadModeloOutro);
       updateProgress();
-      updateSummary();
       updateSubmitState();
     });
 
@@ -258,8 +257,13 @@ function ensurePinpadOutroField() {
 }
 
 function maskCnpj(value) {
-  const v = onlyDigits(value).slice(0, 14);
-  return v
+  const raw = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
+
+  if (/[A-Z]/.test(raw)) {
+    return raw;
+  }
+
+  return raw
     .replace(/^(\d{2})(\d)/, "$1.$2")
     .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
     .replace(/\.(\d{3})(\d)/, ".$1/$2")
@@ -366,14 +370,6 @@ function clearField(input) {
   setError(input, "");
 }
 
-function clearCheckbox(input) {
-  if (!input) return;
-
-  input.checked = false;
-  input.required = false;
-  setError(input, "");
-}
-
 function getPixAttachmentInstruction(banco, campo) {
   return instrucoesAnexoPix[`${banco}::${campo}`];
 }
@@ -468,8 +464,9 @@ function updateEstabelecimentoVisibility() {
   const cnpj = document.getElementById("cnpj");
 
   if (cnpj) {
-    cnpj.required = true;
+    cnpj.required = false;
     cnpj.closest(".field")?.classList.remove("hidden");
+    setError(cnpj, "");
   }
 }
 
@@ -483,14 +480,20 @@ function updateRequestVisibility() {
   updateEstabelecimentoVisibility();
   updateSectionNumbers();
 
-  [adquirente, numeroLogico, pinpadMarca].forEach((input) => {
-    input.required = showTef;
+  [adquirente, numeroLogico, pinpadMarca, quantidadeTerminais].forEach((input) => {
+    if (input) input.required = showTef;
   });
 
   bancoPix.required = showPix;
 
   if (!showTef) {
     [adquirente, numeroLogico, pinpadMarca, pinpadModelo, pinpadModeloOutro].forEach(clearField);
+
+    if (quantidadeTerminais) {
+      quantidadeTerminais.value = "1";
+      quantidadeTerminais.required = false;
+      setError(quantidadeTerminais, "");
+    }
 
     pinpadModelo.innerHTML = '<option value="">Selecione primeiro a marca</option>';
     pinpadModelo.disabled = false;
@@ -526,7 +529,6 @@ function updateRequestVisibility() {
   }
 
   updateProgress();
-  updateSummary();
   updateSubmitState();
 }
 
@@ -559,7 +561,6 @@ function updateAdquirenteRule() {
   adquirenteRuleText.textContent = regra.ruleText;
 
   validateField(numeroLogico);
-  updateSummary();
 }
 
 function updatePinpadModels() {
@@ -585,9 +586,7 @@ function updatePinpadModels() {
       pinpadModeloOutro.required = needsTef();
     }
 
-    if (warning) {
-      warning.classList.remove("hidden");
-    }
+    if (warning) warning.classList.remove("hidden");
 
     modeloHint.textContent = "Digite manualmente o modelo do PINPAD.";
   } else {
@@ -603,9 +602,7 @@ function updatePinpadModels() {
       setError(pinpadModeloOutro, "");
     }
 
-    if (warning) {
-      warning.classList.add("hidden");
-    }
+    if (warning) warning.classList.add("hidden");
 
     const defaultOption = document.createElement("option");
     defaultOption.value = "";
@@ -631,7 +628,6 @@ function updatePinpadModels() {
   }
 
   updateProgress();
-  updateSummary();
   updateSubmitState();
 }
 
@@ -672,12 +668,10 @@ function createPixFields() {
         <small class="error"></small>
       `;
     } else {
-      const isCnpj = campo.toLowerCase() === "cnpj";
-
       wrapper.className = "field";
       wrapper.innerHTML = `
         <label for="pix_${key}">${campo} *</label>
-        <input id="pix_${key}" name="pix_${key}" type="text" ${isCnpj ? 'inputmode="numeric" placeholder="00.000.000/0000-00" data-mask="cnpj"' : ""} data-pix-label="${campo}" required />
+        <input id="pix_${key}" name="pix_${key}" type="text" ${campo.toLowerCase() === "cnpj" ? 'placeholder="Informe o CNPJ, se desejar" data-mask="cnpj"' : ""} data-pix-label="${campo}" required />
         <small class="error"></small>
       `;
     }
@@ -685,14 +679,11 @@ function createPixFields() {
     pixDynamicFields.appendChild(wrapper);
   });
 
-  updateSummary();
   updateSubmitState();
 }
 
 function getFieldError(input) {
-  if (!input || input.closest(".hidden")) {
-    return "";
-  }
+  if (!input || input.closest(".hidden")) return "";
 
   if (input.type === "checkbox") {
     return input.required && !input.checked ? "Confirme este item para enviar." : "";
@@ -700,16 +691,10 @@ function getFieldError(input) {
 
   const value = input.value.trim();
 
-  if (input.required && !value) {
-    return "Campo obrigatório.";
-  }
+  if (input.required && !value) return "Campo obrigatório.";
 
   if (input.id === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     return "Informe um e-mail válido.";
-  }
-
-  if ((input.id === "cnpj" || input.dataset.mask === "cnpj") && value && !isValidCnpj(value)) {
-    return "Informe um CNPJ válido.";
   }
 
   if (input.id === "cpf" && value && !isValidCpf(value)) {
@@ -721,35 +706,33 @@ function getFieldError(input) {
 
     const regra = regrasAdquirentes[adquirente.value];
 
-    if (!regra) {
-      return "Selecione a adquirente antes de preencher.";
-    }
+    if (!regra) return "Selecione a adquirente antes de preencher.";
 
-    if (!regra.validate(value)) {
-      return regra.error;
-    }
+    if (!regra.validate(value)) return regra.error;
   }
 
   if (input.id === "pinpadModelo" && needsTef() && pinpadMarca.value !== "Outro") {
-    if (!value) {
-      return "Selecione o modelo do PINPAD.";
-    }
+    if (!value) return "Selecione o modelo do PINPAD.";
 
     const modelos = modelosPinpad[pinpadMarca.value] || [];
 
-    if (!modelos.includes(value)) {
-      return "Selecione um modelo aceito para esta marca.";
-    }
+    if (!modelos.includes(value)) return "Selecione um modelo aceito para esta marca.";
   }
 
   if (input.id === "pinpadModeloOutro" && needsTef() && pinpadMarca.value === "Outro") {
-    if (!value) {
-      return "Informe o modelo do PINPAD.";
-    }
+    if (!value) return "Informe o modelo do PINPAD.";
   }
 
   if (input.id === "bancoPix" && needsPix() && !value) {
     return "Selecione o banco PIX.";
+  }
+
+  if (input.id === "quantidadeTerminais" && needsTef()) {
+    const quantidade = Number(value);
+
+    if (!Number.isInteger(quantidade) || quantidade < 1) {
+      return "Informe uma quantidade válida, a partir de 1.";
+    }
   }
 
   return "";
@@ -762,10 +745,7 @@ function validateField(input) {
 }
 
 function getRequiredIds() {
-  const requiredIds = [
-    "tipoSolicitacao",
-    "cnpj"
-  ];
+  const requiredIds = ["tipoSolicitacao"];
 
   if (tipoSolicitacao.value !== "pix") {
     requiredIds.push(
@@ -779,7 +759,7 @@ function getRequiredIds() {
   }
 
   if (needsTef()) {
-    requiredIds.push("adquirente", "numeroLogico", "pinpadMarca");
+    requiredIds.push("adquirente", "numeroLogico", "pinpadMarca", "quantidadeTerminais");
 
     if (pinpadMarca.value === "Outro") {
       requiredIds.push("pinpadModeloOutro");
@@ -788,9 +768,7 @@ function getRequiredIds() {
     }
   }
 
-  if (needsPix()) {
-    requiredIds.push("bancoPix");
-  }
+  if (needsPix()) requiredIds.push("bancoPix");
 
   return requiredIds;
 }
@@ -805,26 +783,12 @@ function validateForm() {
 
     input.required = true;
 
-    if (!validateField(input)) {
-      valid = false;
-    }
+    if (!validateField(input)) valid = false;
   });
 
   document.querySelectorAll("#pixDynamicFields input").forEach((input) => {
-    if (!validateField(input)) {
-      valid = false;
-    }
+    if (!validateField(input)) valid = false;
   });
-
-  const confirmacao = document.querySelector("#confirmacao");
-  const confirmacaoError = document.querySelector("#confirmacaoError");
-
-  if (!confirmacao.checked) {
-    confirmacaoError.textContent = "Confirme as informações antes de enviar.";
-    valid = false;
-  } else {
-    confirmacaoError.textContent = "";
-  }
 
   return valid;
 }
@@ -879,16 +843,6 @@ function addLine(lines, label, value, options = {}) {
   lines.push(`${label}: ${clean}`);
 }
 
-function hasAnyFormValue(data) {
-  const baseHasValue = Object.entries(data).some(([key, value]) => {
-    return key !== "pixCampos" && typeof value === "string" && value.trim();
-  });
-
-  const pixHasValue = Object.values(data.pixCampos || {}).some((value) => String(value || "").trim());
-
-  return baseHasValue || pixHasValue;
-}
-
 function buildSummary(data, mask = true) {
   const regra = regrasAdquirentes[data.adquirente];
   const lines = [];
@@ -922,9 +876,11 @@ function buildSummary(data, mask = true) {
 
     if (data.pinpadMarca === "Outro") {
       addLine(lines, "Modelo", data.pinpadModeloOutro);
+      addLine(lines, "Quantidade de terminais", data.quantidadeTerminais || "1");
       lines.push("Aviso: Estou ciente que o modelo do Pinpad não é um modelo homologado");
     } else {
       addLine(lines, "Modelo", data.pinpadModelo);
+      addLine(lines, "Quantidade de terminais", data.quantidadeTerminais || "1");
     }
   }
 
@@ -945,14 +901,6 @@ function buildSummary(data, mask = true) {
   }
 
   return lines.join("\n");
-}
-
-function updateSummary() {
-  const data = getFormData();
-
-  summaryText.textContent = hasAnyFormValue(data)
-    ? buildSummary(data, true)
-    : "Preencha o formulário para gerar o resumo.";
 }
 
 function updateProgress() {
@@ -988,15 +936,6 @@ function focusFirstInvalidField() {
   if (firstInvalidInput) {
     firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
     firstInvalidInput.focus();
-    return;
-  }
-
-  const confirmacao = document.querySelector("#confirmacao");
-  const confirmacaoError = document.querySelector("#confirmacaoError");
-
-  if (confirmacaoError && confirmacaoError.textContent.trim()) {
-    confirmacao.scrollIntoView({ behavior: "smooth", block: "center" });
-    confirmacao.focus();
   }
 }
 
@@ -1004,7 +943,6 @@ sendInfoBtn.addEventListener("click", () => {
   if (!validateForm()) {
     showNotice("Preencha todos os campos obrigatórios corretamente antes de enviar.", "error");
     focusFirstInvalidField();
-    updateSummary();
     updateSubmitState();
     return;
   }
@@ -1019,13 +957,12 @@ sendInfoBtn.addEventListener("click", () => {
 form.addEventListener("input", (event) => {
   if (!event.target.matches("input, select, textarea")) return;
 
-  if (event.target.dataset.mask === "cnpj") {
+  if (event.target.id === "cnpj" || event.target.dataset.mask === "cnpj") {
     event.target.value = maskCnpj(event.target.value);
   }
 
   validateField(event.target);
   updateProgress();
-  updateSummary();
   updateSubmitState();
 });
 
@@ -1035,16 +972,11 @@ form.addEventListener("change", (event) => {
   if (event.target.id === "pinpadMarca") updatePinpadModels();
   if (event.target.id === "bancoPix") createPixFields();
 
-  if (event.target.id === "confirmacao") {
-    document.querySelector("#confirmacaoError").textContent = event.target.checked
-      ? ""
-      : "Confirme as informações antes de enviar.";
-  } else if (event.target.matches("input, select, textarea")) {
+  if (event.target.matches("input, select, textarea")) {
     validateField(event.target);
   }
 
   updateProgress();
-  updateSummary();
   updateSubmitState();
 });
 
@@ -1053,6 +985,5 @@ ensurePinpadOutroField();
 updateAdquirenteRule();
 updatePinpadModels();
 updateRequestVisibility();
-updateSummary();
 updateProgress();
 updateSubmitState();
