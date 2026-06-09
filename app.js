@@ -107,9 +107,9 @@ const guiasPix = {
   "BANCO PAGSEGURO (PAGBANK)": {
     title: "PagSeguro/PagBank",
     file: "pagseguro-pagbank.pdf",
-    description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher. Quando visualizar essa opção, clique no link abaixo.",
+    description: "No PDF aparecerá uma orientação \"Clique aqui\" para preencher, quando visualizar essa opção clique no botão Abrir formulário do PagBank ",
     link: "https://app.pipefy.com/public/form/z7Uas1lI",
-    linkLabel: "Abrir formulário Pipefy do PagBank",
+    linkLabel: "Abrir formulário do PagBank",
     preview: true
   },
   "BANCO SANTANDER": {
