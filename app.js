@@ -1,9 +1,9 @@
 const WHATSAPP_NUMBER = "551126265184";
 
 const tiposSolicitacao = {
-  tef_pix: "TEF (CARTÃO CREDITO, DEBITO E PIX)",
-  tef: "TEF (CARTÃO DE CREDITO E DEBITO)",
-  pix: "PIX (DEBITO E CREDITO CONFIGURADO)"
+  tef_pix: "Configurar crédito, débito e PIX",
+  tef: "Configurar somente crédito e débito",
+  pix: "Configurar somente PIX — crédito e débito já configurados"
 };
 
 const regrasAdquirentes = {
