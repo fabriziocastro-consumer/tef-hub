@@ -37,8 +37,8 @@ const regrasAdquirentes = {
   },
   SICREDI: {
     label: "Número lógico",
-    ruleText: "SICREDI: número lógico obrigatório com exatamente 8 dígitos numéricos.",
-    hint: "Obrigatório: 8 dígitos numéricos.",
+    ruleText: "SICREDI: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex: T1234567.",
+    hint: "Obrigatório: inicia com T + 7 números. Ex: T1234567.",
     validate: (v) => /^\d{8}$/.test(v),
     error: "Para SICREDI, informe exatamente 8 dígitos numéricos."
   },
@@ -47,7 +47,7 @@ const regrasAdquirentes = {
     ruleText: "SIPAG / SICOOB: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex.: T1234567.",
     hint: "Obrigatório: inicia com T + 7 números. Ex.: T1234567.",
     validate: (v) => /^T\d{7}$/i.test(v),
-    error: "Para SIPAG / SICOOB, informe T + 7 números, totalizando 8 caracteres. Ex.: T1234567."
+    error: "Para SIPAG / SICOOB, informe T + 7 números, totalizando 8 caracteres. Ex: T1234567."
   },
   PAGSEGURO: {
     label: "Número lógico",
@@ -176,6 +176,7 @@ const pixFormSection = document.querySelector("#pixFormSection");
 const adquirente = document.querySelector("#adquirente");
 const numeroLogico = document.querySelector("#numeroLogico");
 const numeroLogicoLabel = document.querySelector("#numeroLogicoLabel");
+const numeroRedeHint = document.querySelector("#numeroRedeHint");
 const adquirenteHint = document.querySelector("#adquirenteHint");
 const adquirenteRuleText = document.querySelector("#adquirenteRuleText");
 const pinpadMarca = document.querySelector("#pinpadMarca");
@@ -510,6 +511,7 @@ function updateRequestVisibility() {
 
     modeloHint.textContent = "Modelos aceitos serão exibidos conforme a marca.";
     numeroLogicoLabel.textContent = "Número lógico *";
+    numeroRedeHint.textContent = "Selecione a adquirente para saber qual código informar.";
     adquirenteHint.textContent = "Selecione a adquirente.";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
   } else {
@@ -551,12 +553,16 @@ function updateAdquirenteRule() {
 
   if (!regra) {
     numeroLogicoLabel.textContent = "Número lógico *";
+    numeroRedeHint.textContent = "Selecione a adquirente para saber qual código informar.";
     adquirenteHint.textContent = "Selecione a adquirente";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
     return;
   }
 
   numeroLogicoLabel.textContent = `${regra.label} *`;
+  numeroRedeHint.textContent = adquirente.value === "STONE"
+    ? "Para Stone o número Rede é o Código SAK."
+    : "Número Rede é o Código EC (Estabelecimento Comercial) gerado na adquirente.";
   adquirenteHint.textContent = regra.hint;
   adquirenteRuleText.textContent = regra.ruleText;
 
@@ -671,7 +677,7 @@ function createPixFields() {
       wrapper.className = "field";
       wrapper.innerHTML = `
         <label for="pix_${key}">${campo} *</label>
-        <input id="pix_${key}" name="pix_${key}" type="text" ${campo.toLowerCase() === "cnpj" ? 'placeholder="Informe o CNPJ, se desejar" data-mask="cnpj"' : ""} data-pix-label="${campo}" required />
+        <input id="pix_${key}" name="pix_${key}" type="text" ${campo.toLowerCase() === "cnpj" ? 'placeholder="Informe o CNPJ" data-mask="cnpj"' : ""} data-pix-label="${campo}" required />
         <small class="error"></small>
       `;
     }
@@ -716,7 +722,7 @@ function getFieldError(input) {
 
     const modelos = modelosPinpad[pinpadMarca.value] || [];
 
-    if (!modelos.includes(value)) return "Selecione um modelo aceito para esta marca.";
+    if (!modelos.includes(value)) return "Selecione um modelo";
   }
 
   if (input.id === "pinpadModeloOutro" && needsTef() && pinpadMarca.value === "Outro") {
