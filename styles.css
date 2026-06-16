@@ -175,6 +175,10 @@ form {
   align-items: start;
 }
 
+.troca-adquirente-grid {
+  align-items: start;
+}
+
 .pinpad-grid {
   grid-template-columns: 1fr 1fr;
   align-items: start;
@@ -256,6 +260,33 @@ textarea:disabled {
   background: #fff7ed;
   color: #92400e;
   font-weight: 800;
+}
+
+.attention-card {
+  margin: 18px 0;
+  padding: 15px;
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: #7c2d12;
+  line-height: 1.45;
+}
+
+.attention-card--center {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.attention-card strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #7c2d12;
+}
+
+.attention-card p {
+  margin: 0;
 }
 
 .error {

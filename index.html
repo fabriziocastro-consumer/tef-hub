@@ -39,6 +39,7 @@
                 <option value="tef_pix">Configurar crédito, débito e PIX</option>
                 <option value="tef">Configurar somente crédito e débito</option>
                 <option value="pix">Configurar somente PIX</option>
+                <option value="troca_inclusao_adquirente">Troca ou inclusão de adquirente</option>
               </select>
               <small class="hint">Se o TEF já está configurado para cartão de crédito e débito e você precisa apenas habilitar PIX, selecione “Configurar somente PIX”.</small>
               <small class="error"></small>
@@ -92,6 +93,155 @@
               <label for="telefone">Telefone *</label>
               <input id="telefone" name="telefone" type="tel" inputmode="tel" placeholder="(11) 99999-9999" required />
               <small class="error"></small>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section hidden" id="trocaAdquirenteSection">
+          <div class="section-heading">
+            <div class="section-number">3</div>
+            <div>
+              <h2>Troca ou inclusão de adquirente</h2>
+              <p>Selecione o tipo de alteração para carregar os campos necessários.</p>
+            </div>
+          </div>
+
+          <div class="grid grid--2">
+            <div class="field field--full">
+              <label for="tipoAlteracaoAdquirente">Tipo de alteração *</label>
+              <select id="tipoAlteracaoAdquirente" name="tipoAlteracaoAdquirente">
+                <option value="">Selecione</option>
+                <option value="troca">Troca de adquirente</option>
+                <option value="inclusao">Inclusão de adquirente</option>
+              </select>
+              <small class="hint">Escolha se a solicitação é uma troca completa ou a inclusão de uma segunda adquirente.</small>
+              <small class="error"></small>
+            </div>
+          </div>
+
+          <div class="grid grid--2 hidden troca-adquirente-grid" id="trocaAdquirenteFields">
+            <div class="field">
+              <label for="adquirenteAtualTroca">Adquirente utilizada atualmente *</label>
+              <select id="adquirenteAtualTroca" name="adquirenteAtualTroca">
+                <option value="">Selecione</option>
+                <option value="REDE">REDE</option>
+                <option value="CIELO">CIELO</option>
+                <option value="STONE">STONE</option>
+                <option value="VERO / BANRISUL">VERO / BANRISUL</option>
+                <option value="SICREDI">SICREDI</option>
+                <option value="SIPAG / SICOOB">SIPAG / SICOOB</option>
+                <option value="PAGSEGURO">PAGSEGURO</option>
+                <option value="GETNET">GETNET</option>
+              </select>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="novaAdquirenteTroca">Nova adquirente *</label>
+              <select id="novaAdquirenteTroca" name="novaAdquirenteTroca">
+                <option value="">Selecione</option>
+                <option value="REDE">REDE</option>
+                <option value="CIELO">CIELO</option>
+                <option value="STONE">STONE</option>
+                <option value="VERO / BANRISUL">VERO / BANRISUL</option>
+                <option value="SICREDI">SICREDI</option>
+                <option value="SIPAG / SICOOB">SIPAG / SICOOB</option>
+                <option value="PAGSEGURO">PAGSEGURO</option>
+                <option value="GETNET">GETNET</option>
+              </select>
+              <small class="hint" id="novaAdquirenteTrocaHint">Selecione a nova adquirente.</small>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="numeroLogicoTroca" id="numeroLogicoTrocaLabel">Número lógico *</label>
+              <input id="numeroLogicoTroca" name="numeroLogicoTroca" type="text" />
+              <small class="hint strong-hint" id="numeroLogicoTrocaHint">Selecione a nova adquirente para ver a regra obrigatória.</small>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="numeroRedeTroca">Número Rede *</label>
+              <input id="numeroRedeTroca" name="numeroRedeTroca" type="text" />
+              <small class="hint" id="numeroRedeTrocaHint">Selecione a nova adquirente para saber qual código informar.</small>
+              <small class="error"></small>
+            </div>
+          </div>
+
+          <div class="rule-card hidden" id="trocaAdquirenteRuleCard">
+            <div class="rule-icon">✓</div>
+            <div>
+              <strong>Métrica obrigatória</strong>
+              <span id="trocaAdquirenteRuleText">Selecione a nova adquirente para exibir a regra correta do número lógico ou Código SAK.</span>
+            </div>
+          </div>
+
+          <div class="hidden" id="inclusaoAdquirenteFields">
+            <div class="attention-card attention-card--center">
+              <strong>Atenção</strong>
+              <p>Ao utilizar 2 adquirentes no mesmo PINPAD, é importante estar ciente que não é possível utilizar a mesma bandeira nas duas adquirentes. Por esse motivo, esclareça abaixo quais bandeiras serão usadas em cada adquirente.</p>
+            </div>
+
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="adquirenteAtualInclusao">Adquirente atual utilizada *</label>
+                <select id="adquirenteAtualInclusao" name="adquirenteAtualInclusao">
+                  <option value="">Selecione</option>
+                  <option value="REDE">REDE</option>
+                  <option value="CIELO">CIELO</option>
+                  <option value="STONE">STONE</option>
+                  <option value="VERO / BANRISUL">VERO / BANRISUL</option>
+                  <option value="SICREDI">SICREDI</option>
+                  <option value="SIPAG / SICOOB">SIPAG / SICOOB</option>
+                  <option value="PAGSEGURO">PAGSEGURO</option>
+                  <option value="GETNET">GETNET</option>
+                </select>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="segundaAdquirenteInclusao">Segunda adquirente *</label>
+                <select id="segundaAdquirenteInclusao" name="segundaAdquirenteInclusao">
+                  <option value="">Selecione</option>
+                  <option value="REDE">REDE</option>
+                  <option value="CIELO">CIELO</option>
+                  <option value="STONE">STONE</option>
+                  <option value="VERO / BANRISUL">VERO / BANRISUL</option>
+                  <option value="SICREDI">SICREDI</option>
+                  <option value="SIPAG / SICOOB">SIPAG / SICOOB</option>
+                  <option value="PAGSEGURO">PAGSEGURO</option>
+                  <option value="GETNET">GETNET</option>
+                </select>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="bandeirasAdquirenteAtual">Bandeiras que serão aceitas nessa adquirente *</label>
+                <textarea id="bandeirasAdquirenteAtual" name="bandeirasAdquirenteAtual" rows="3"></textarea>
+                <small class="hint">Ex.: Visa, Master, Elo.</small>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="bandeirasSegundaAdquirente">Bandeiras que serão utilizadas nessa adquirente *</label>
+                <textarea id="bandeirasSegundaAdquirente" name="bandeirasSegundaAdquirente" rows="3"></textarea>
+                <small class="hint">Informe somente as bandeiras que não serão usadas na adquirente atual.</small>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="numeroLogicoInclusao" id="numeroLogicoInclusaoLabel">Número lógico da adquirente que deseja acrescentar *</label>
+                <input id="numeroLogicoInclusao" name="numeroLogicoInclusao" type="text" />
+                <small class="hint strong-hint" id="numeroLogicoInclusaoHint">Selecione a segunda adquirente para ver a regra obrigatória.</small>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="numeroRedeInclusao">Número Rede da adquirente que deseja acrescentar *</label>
+                <input id="numeroRedeInclusao" name="numeroRedeInclusao" type="text" />
+                <small class="hint" id="numeroRedeInclusaoHint">Selecione a segunda adquirente para saber qual código informar.</small>
+                <small class="error"></small>
+              </div>
             </div>
           </div>
         </section>

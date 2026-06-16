@@ -3,7 +3,8 @@ const WHATSAPP_NUMBER = "551126265184";
 const tiposSolicitacao = {
   tef_pix: "Configurar crédito, débito e PIX",
   tef: "Configurar somente crédito e débito",
-  pix: "Configurar somente PIX — crédito e débito já configurados"
+  pix: "Configurar somente PIX — crédito e débito já configurados",
+  troca_inclusao_adquirente: "Troca ou inclusão de adquirente"
 };
 
 const regrasAdquirentes = {
@@ -39,19 +40,19 @@ const regrasAdquirentes = {
     label: "Número lógico",
     ruleText: "SICREDI: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex: T1234567.",
     hint: "Obrigatório: inicia com T + 7 números. Ex: T1234567.",
-    validate: (v) => /^\d{8}$/.test(v),
-    error: "Para SICREDI, informe exatamente 8 dígitos numéricos."
+    validate: (v) => /^T\d{7}$/i.test(v),
+    error: "Para SICREDI, informe T + 7 números, totalizando 8 caracteres. Ex: T1234567."
   },
   "SIPAG / SICOOB": {
     label: "Número lógico",
-    ruleText: "SIPAG / SICOOB: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex.: T1234567.",
-    hint: "Obrigatório: inicia com T + 7 números. Ex.: T1234567.",
+    ruleText: "SIPAG / SICOOB: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex: T1234567.",
+    hint: "Obrigatório: inicia com T + 7 números. Ex: T1234567.",
     validate: (v) => /^T\d{7}$/i.test(v),
     error: "Para SIPAG / SICOOB, informe T + 7 números, totalizando 8 caracteres. Ex: T1234567."
   },
   PAGSEGURO: {
     label: "Número lógico",
-    ruleText: "PAGSEGURO: número lógico obrigatório com 15 caracteres, podendo iniciar com T. Ex.: T1234567891011.",
+    ruleText: "PAGSEGURO: número lógico obrigatório com 15 caracteres, podendo iniciar com T. Ex: T1234567891011.",
     hint: "Obrigatório: 15 caracteres, pode iniciar com T.",
     validate: (v) => /^T?\d{14,15}$/i.test(v),
     error: "Para PAGSEGURO, informe 15 caracteres. Pode iniciar com T."
@@ -196,6 +197,28 @@ const pixDynamicFields = document.querySelector("#pixDynamicFields");
 const sendInfoBtn = document.querySelector("#sendInfoBtn");
 const sendHint = document.querySelector("#sendHint");
 const notice = document.querySelector("#notice");
+const trocaAdquirenteSection = document.querySelector("#trocaAdquirenteSection");
+const tipoAlteracaoAdquirente = document.querySelector("#tipoAlteracaoAdquirente");
+const trocaAdquirenteFields = document.querySelector("#trocaAdquirenteFields");
+const inclusaoAdquirenteFields = document.querySelector("#inclusaoAdquirenteFields");
+const adquirenteAtualTroca = document.querySelector("#adquirenteAtualTroca");
+const novaAdquirenteTroca = document.querySelector("#novaAdquirenteTroca");
+const numeroLogicoTroca = document.querySelector("#numeroLogicoTroca");
+const numeroLogicoTrocaLabel = document.querySelector("#numeroLogicoTrocaLabel");
+const numeroLogicoTrocaHint = document.querySelector("#numeroLogicoTrocaHint");
+const numeroRedeTroca = document.querySelector("#numeroRedeTroca");
+const numeroRedeTrocaHint = document.querySelector("#numeroRedeTrocaHint");
+const trocaAdquirenteRuleCard = document.querySelector("#trocaAdquirenteRuleCard");
+const trocaAdquirenteRuleText = document.querySelector("#trocaAdquirenteRuleText");
+const adquirenteAtualInclusao = document.querySelector("#adquirenteAtualInclusao");
+const segundaAdquirenteInclusao = document.querySelector("#segundaAdquirenteInclusao");
+const numeroLogicoInclusao = document.querySelector("#numeroLogicoInclusao");
+const numeroLogicoInclusaoLabel = document.querySelector("#numeroLogicoInclusaoLabel");
+const numeroLogicoInclusaoHint = document.querySelector("#numeroLogicoInclusaoHint");
+const numeroRedeInclusao = document.querySelector("#numeroRedeInclusao");
+const numeroRedeInclusaoHint = document.querySelector("#numeroRedeInclusaoHint");
+const bandeirasAdquirenteAtual = document.querySelector("#bandeirasAdquirenteAtual");
+const bandeirasSegundaAdquirente = document.querySelector("#bandeirasSegundaAdquirente");
 
 let pinpadModeloOutro = null;
 
@@ -345,12 +368,20 @@ function needsPix() {
   return tipoSolicitacao.value === "pix" || tipoSolicitacao.value === "tef_pix";
 }
 
+function needsAdquirenteChange() {
+  return tipoSolicitacao.value === "troca_inclusao_adquirente";
+}
+
 function dataNeedsTef(data) {
   return data.tipoSolicitacao === "tef" || data.tipoSolicitacao === "tef_pix";
 }
 
 function dataNeedsPix(data) {
   return data.tipoSolicitacao === "pix" || data.tipoSolicitacao === "tef_pix";
+}
+
+function dataNeedsAdquirenteChange(data) {
+  return data.tipoSolicitacao === "troca_inclusao_adquirente";
 }
 
 function setError(input, message) {
@@ -426,6 +457,8 @@ function updatePixGuide(banco) {
 
 function updateEstabelecimentoVisibility() {
   const pixOnly = tipoSolicitacao.value === "pix";
+  const adquirenteChangeOnly = needsAdquirenteChange();
+  const cnpjOnly = pixOnly || adquirenteChangeOnly;
 
   const fieldsToHideForPixOnly = [
     "razaoSocial",
@@ -453,10 +486,10 @@ function updateEstabelecimentoVisibility() {
     const field = input.closest(".field");
     if (!field) return;
 
-    field.classList.toggle("hidden", pixOnly);
-    input.required = !pixOnly && requiredWhenNotPixOnly.includes(id);
+    field.classList.toggle("hidden", cnpjOnly);
+    input.required = !cnpjOnly && requiredWhenNotPixOnly.includes(id);
 
-    if (pixOnly) {
+    if (cnpjOnly) {
       input.value = "";
       setError(input, "");
     }
@@ -465,18 +498,143 @@ function updateEstabelecimentoVisibility() {
   const cnpj = document.getElementById("cnpj");
 
   if (cnpj) {
-    cnpj.required = false;
+    cnpj.required = adquirenteChangeOnly;
     cnpj.closest(".field")?.classList.remove("hidden");
     setError(cnpj, "");
   }
 }
 
+function getNumeroRedeHint(adquirenteValue) {
+  if (!adquirenteValue) return "Selecione a adquirente para saber qual código informar.";
+
+  return adquirenteValue === "STONE"
+    ? "Para Stone, o Número Rede é o Stone Code."
+    : "Número Rede é o Código EC (Estabelecimento Comercial) gerado na adquirente.";
+}
+
+function setRequired(inputs, required) {
+  inputs.forEach((input) => {
+    if (!input) return;
+    input.required = required;
+  });
+}
+
+function clearHiddenFields(container) {
+  if (!container) return;
+
+  container.querySelectorAll("input, select, textarea").forEach((input) => {
+    clearField(input);
+  });
+}
+
+function resetTrocaAdquirenteRule() {
+  numeroLogicoTrocaLabel.textContent = "Número lógico *";
+  numeroLogicoTrocaHint.textContent = "Selecione a nova adquirente para ver a regra obrigatória.";
+  numeroRedeTrocaHint.textContent = getNumeroRedeHint("");
+  trocaAdquirenteRuleText.textContent = "Selecione a nova adquirente para exibir a regra correta do número lógico ou Código SAK.";
+  trocaAdquirenteRuleCard.classList.add("hidden");
+}
+
+function updateTrocaAdquirenteRule() {
+  const regra = regrasAdquirentes[novaAdquirenteTroca.value];
+
+  if (!regra) {
+    resetTrocaAdquirenteRule();
+    validateField(numeroLogicoTroca);
+    return;
+  }
+
+  numeroLogicoTrocaLabel.textContent = `${regra.label} *`;
+  numeroLogicoTrocaHint.textContent = regra.hint;
+  numeroRedeTrocaHint.textContent = getNumeroRedeHint(novaAdquirenteTroca.value);
+  trocaAdquirenteRuleText.textContent = regra.ruleText;
+  trocaAdquirenteRuleCard.classList.remove("hidden");
+
+  validateField(numeroLogicoTroca);
+}
+
+function resetInclusaoAdquirenteRule() {
+  numeroLogicoInclusaoLabel.textContent = "Número lógico da adquirente que deseja acrescentar *";
+  numeroLogicoInclusaoHint.textContent = "Selecione a segunda adquirente para ver a regra obrigatória.";
+  numeroRedeInclusaoHint.textContent = getNumeroRedeHint("");
+}
+
+function updateInclusaoAdquirenteRule() {
+  const regra = regrasAdquirentes[segundaAdquirenteInclusao.value];
+
+  if (!regra) {
+    resetInclusaoAdquirenteRule();
+    validateField(numeroLogicoInclusao);
+    return;
+  }
+
+  numeroLogicoInclusaoLabel.textContent = `${regra.label} da adquirente que deseja acrescentar *`;
+  numeroLogicoInclusaoHint.textContent = regra.hint;
+  numeroRedeInclusaoHint.textContent = getNumeroRedeHint(segundaAdquirenteInclusao.value);
+
+  validateField(numeroLogicoInclusao);
+}
+
+function updateAdquirenteChangeVisibility() {
+  const showChange = needsAdquirenteChange();
+  const isTroca = showChange && tipoAlteracaoAdquirente.value === "troca";
+  const isInclusao = showChange && tipoAlteracaoAdquirente.value === "inclusao";
+
+  trocaAdquirenteSection.classList.toggle("hidden", !showChange);
+  trocaAdquirenteFields.classList.toggle("hidden", !isTroca);
+  inclusaoAdquirenteFields.classList.toggle("hidden", !isInclusao);
+  tipoAlteracaoAdquirente.required = showChange;
+
+  setRequired(
+    [adquirenteAtualTroca, novaAdquirenteTroca, numeroLogicoTroca, numeroRedeTroca],
+    isTroca
+  );
+  setRequired(
+    [
+      adquirenteAtualInclusao,
+      segundaAdquirenteInclusao,
+      numeroLogicoInclusao,
+      numeroRedeInclusao,
+      bandeirasAdquirenteAtual,
+      bandeirasSegundaAdquirente
+    ],
+    isInclusao
+  );
+
+  if (!showChange) {
+    clearField(tipoAlteracaoAdquirente);
+    clearHiddenFields(trocaAdquirenteSection);
+    resetTrocaAdquirenteRule();
+    return;
+  }
+
+  if (!isTroca) {
+    clearHiddenFields(trocaAdquirenteFields);
+    resetTrocaAdquirenteRule();
+  } else {
+    updateTrocaAdquirenteRule();
+  }
+
+  if (!isInclusao) {
+    clearHiddenFields(inclusaoAdquirenteFields);
+    resetInclusaoAdquirenteRule();
+  } else {
+    updateInclusaoAdquirenteRule();
+  }
+
+  updateSectionNumbers();
+  updateProgress();
+  updateSubmitState();
+}
+
 function updateRequestVisibility() {
   const showTef = needsTef();
   const showPix = needsPix();
+  const showAdquirenteChange = needsAdquirenteChange();
 
   tefSections.forEach((section) => section.classList.toggle("hidden", !showTef));
   pixFormSection.classList.toggle("hidden", !showPix);
+  trocaAdquirenteSection.classList.toggle("hidden", !showAdquirenteChange);
 
   updateEstabelecimentoVisibility();
   updateSectionNumbers();
@@ -511,13 +669,15 @@ function updateRequestVisibility() {
 
     modeloHint.textContent = "Modelos aceitos serão exibidos conforme a marca.";
     numeroLogicoLabel.textContent = "Número lógico *";
-    numeroRedeHint.textContent = "Selecione a adquirente para saber qual código informar.";
+    numeroRedeHint.textContent = getNumeroRedeHint("");
     adquirenteHint.textContent = "Selecione a adquirente.";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
   } else {
     updateAdquirenteRule();
     updatePinpadModels();
   }
+
+  updateAdquirenteChangeVisibility();
 
   if (!showPix) {
     clearField(bancoPix);
@@ -553,16 +713,14 @@ function updateAdquirenteRule() {
 
   if (!regra) {
     numeroLogicoLabel.textContent = "Número lógico *";
-    numeroRedeHint.textContent = "Selecione a adquirente para saber qual código informar.";
+    numeroRedeHint.textContent = getNumeroRedeHint("");
     adquirenteHint.textContent = "Selecione a adquirente";
     adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
     return;
   }
 
   numeroLogicoLabel.textContent = `${regra.label} *`;
-  numeroRedeHint.textContent = adquirente.value === "STONE"
-    ? "Para Stone o número Rede é o Stone Code"
-    : "Número Rede é o Código EC (Estabelecimento Comercial) gerado na adquirente.";
+  numeroRedeHint.textContent = getNumeroRedeHint(adquirente.value);
   adquirenteHint.textContent = regra.hint;
   adquirenteRuleText.textContent = regra.ruleText;
 
@@ -717,6 +875,26 @@ function getFieldError(input) {
     if (!regra.validate(value)) return regra.error;
   }
 
+  if (input.id === "numeroLogicoTroca") {
+    if (!needsAdquirenteChange() || tipoAlteracaoAdquirente.value !== "troca") return "";
+
+    const regra = regrasAdquirentes[novaAdquirenteTroca.value];
+
+    if (!regra) return "Selecione a nova adquirente antes de preencher.";
+
+    if (!regra.validate(value)) return regra.error;
+  }
+
+  if (input.id === "numeroLogicoInclusao") {
+    if (!needsAdquirenteChange() || tipoAlteracaoAdquirente.value !== "inclusao") return "";
+
+    const regra = regrasAdquirentes[segundaAdquirenteInclusao.value];
+
+    if (!regra) return "Selecione a segunda adquirente antes de preencher.";
+
+    if (!regra.validate(value)) return regra.error;
+  }
+
   if (input.id === "pinpadModelo" && needsTef() && pinpadMarca.value !== "Outro") {
     if (!value) return "Selecione o modelo do PINPAD.";
 
@@ -753,7 +931,9 @@ function validateField(input) {
 function getRequiredIds() {
   const requiredIds = ["tipoSolicitacao"];
 
-  if (tipoSolicitacao.value !== "pix") {
+  if (needsAdquirenteChange()) {
+    requiredIds.push("cnpj");
+  } else if (tipoSolicitacao.value !== "pix") {
     requiredIds.push(
       "razaoSocial",
       "nomeFantasia",
@@ -771,6 +951,25 @@ function getRequiredIds() {
       requiredIds.push("pinpadModeloOutro");
     } else {
       requiredIds.push("pinpadModelo");
+    }
+  }
+
+  if (needsAdquirenteChange()) {
+    requiredIds.push("tipoAlteracaoAdquirente");
+
+    if (tipoAlteracaoAdquirente.value === "troca") {
+      requiredIds.push("adquirenteAtualTroca", "novaAdquirenteTroca", "numeroLogicoTroca", "numeroRedeTroca");
+    }
+
+    if (tipoAlteracaoAdquirente.value === "inclusao") {
+      requiredIds.push(
+        "adquirenteAtualInclusao",
+        "segundaAdquirenteInclusao",
+        "numeroLogicoInclusao",
+        "numeroRedeInclusao",
+        "bandeirasAdquirenteAtual",
+        "bandeirasSegundaAdquirente"
+      );
     }
   }
 
@@ -859,7 +1058,7 @@ function buildSummary(data, mask = true) {
   lines.push("DADOS DO ESTABELECIMENTO");
   addLine(lines, "CNPJ", data.cnpj);
 
-  if (data.tipoSolicitacao !== "pix") {
+  if (data.tipoSolicitacao !== "pix" && !dataNeedsAdquirenteChange(data)) {
     addLine(lines, "Razão Social", data.razaoSocial);
     addLine(lines, "Nome Fantasia", data.nomeFantasia);
     addLine(lines, "Inscrição Estadual", data.inscricaoEstadual);
@@ -887,6 +1086,33 @@ function buildSummary(data, mask = true) {
     } else {
       addLine(lines, "Modelo", data.pinpadModelo);
       addLine(lines, "Quantidade de terminais", data.quantidadeTerminais || "1");
+    }
+  }
+
+  if (dataNeedsAdquirenteChange(data)) {
+    lines.push("");
+    lines.push("ALTERAÇÃO DE ADQUIRENTE");
+
+    if (data.tipoAlteracaoAdquirente === "troca") {
+      const regraTroca = regrasAdquirentes[data.novaAdquirenteTroca];
+
+      addLine(lines, "Tipo de alteração", "Troca de adquirente");
+      addLine(lines, "Adquirente utilizada atualmente", data.adquirenteAtualTroca);
+      addLine(lines, "Nova adquirente", data.novaAdquirenteTroca);
+      addLine(lines, regraTroca?.label || "Número lógico", data.numeroLogicoTroca);
+      addLine(lines, "Número Rede", data.numeroRedeTroca);
+    }
+
+    if (data.tipoAlteracaoAdquirente === "inclusao") {
+      const regraInclusao = regrasAdquirentes[data.segundaAdquirenteInclusao];
+
+      addLine(lines, "Tipo de alteração", "Inclusão de adquirente");
+      addLine(lines, "Adquirente Principal", data.adquirenteAtualInclusao);
+      addLine(lines, "Bandeiras aceitas na adquirente atual", data.bandeirasAdquirenteAtual);
+      addLine(lines, "Adquirente Secundaria", data.segundaAdquirenteInclusao);
+      addLine(lines, regraInclusao?.label || "Número lógico", data.numeroLogicoInclusao);
+      addLine(lines, "Número Rede", data.numeroRedeInclusao);
+      addLine(lines, "Bandeiras utilizadas na segunda adquirente", data.bandeirasSegundaAdquirente);
     }
   }
 
@@ -975,6 +1201,9 @@ form.addEventListener("input", (event) => {
 form.addEventListener("change", (event) => {
   if (event.target.id === "tipoSolicitacao") updateRequestVisibility();
   if (event.target.id === "adquirente") updateAdquirenteRule();
+  if (event.target.id === "tipoAlteracaoAdquirente") updateAdquirenteChangeVisibility();
+  if (event.target.id === "novaAdquirenteTroca") updateTrocaAdquirenteRule();
+  if (event.target.id === "segundaAdquirenteInclusao") updateInclusaoAdquirenteRule();
   if (event.target.id === "pinpadMarca") updatePinpadModels();
   if (event.target.id === "bancoPix") createPixFields();
 
