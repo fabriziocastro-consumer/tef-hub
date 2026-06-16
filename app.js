@@ -23,10 +23,10 @@ const regrasAdquirentes = {
   },
   STONE: {
     label: "Código SAK",
-    ruleText: "STONE: Código SAK obrigatório, alfanumérico, com exatamente 32 caracteres. Pode conter letras e números.",
+    ruleText: "STONE: Código SAK alfanumérico, com exatamente 32 caracteres",
     hint: "Obrigatório: 32 caracteres alfanuméricos.",
     validate: (v) => /^[A-Za-z0-9]{32}$/.test(v),
-    error: "Para STONE, o Código SAK deve ser alfanumérico e conter exatamente 32 caracteres."
+    error: "Para STONE, o Código SAK deve ser alfanumérico"
   },
   "VERO / BANRISUL": {
     label: "Número lógico",
@@ -561,7 +561,7 @@ function updateAdquirenteRule() {
 
   numeroLogicoLabel.textContent = `${regra.label} *`;
   numeroRedeHint.textContent = adquirente.value === "STONE"
-    ? "Para Stone o número Rede é o Código SAK."
+    ? "Para Stone o número Rede é o Stone Code"
     : "Número Rede é o Código EC (Estabelecimento Comercial) gerado na adquirente.";
   adquirenteHint.textContent = regra.hint;
   adquirenteRuleText.textContent = regra.ruleText;
