@@ -119,7 +119,12 @@
             </div>
           </div>
 
-          <div class="grid grid--2 hidden troca-adquirente-grid" id="trocaAdquirenteFields">
+          <div class="attention-card attention-card--center">
+            <strong>Atenção</strong>
+            <p>Para troca ou inclusão de adquirente, informe apenas o CNPJ do estabelecimento e preencha os dados da adquirente abaixo.</p>
+          </div>
+
+          <div class="grid adquirente-grid hidden" id="trocaAdquirenteFields">
             <div class="field">
               <label for="adquirenteAtualTroca">Adquirente utilizada atualmente *</label>
               <select id="adquirenteAtualTroca" name="adquirenteAtualTroca">
@@ -178,13 +183,13 @@
 
           <div class="hidden" id="inclusaoAdquirenteFields">
             <div class="attention-card attention-card--center">
-              <strong>Atenção</strong>
-              <p>Ao utilizar 2 adquirentes no mesmo PINPAD, é importante estar ciente que não é possível utilizar a mesma bandeira nas duas adquirentes. Por esse motivo, esclareça abaixo quais bandeiras serão usadas em cada adquirente.</p>
+              <strong>Atenção para inclusão</strong>
+              <p>Ao utilizar 2 adquirentes no mesmo PINPAD, não é possível usar a mesma bandeira nas duas adquirentes. Informe abaixo quais bandeiras serão usadas em cada uma.</p>
             </div>
 
             <div class="grid grid--2">
               <div class="field">
-                <label for="adquirenteAtualInclusao">Adquirente atual utilizada *</label>
+                <label for="adquirenteAtualInclusao">Adquirente principal *</label>
                 <select id="adquirenteAtualInclusao" name="adquirenteAtualInclusao">
                   <option value="">Selecione</option>
                   <option value="REDE">REDE</option>
@@ -218,7 +223,7 @@
               <div class="field">
                 <label for="bandeirasAdquirenteAtual">Bandeiras que serão aceitas nessa adquirente *</label>
                 <textarea id="bandeirasAdquirenteAtual" name="bandeirasAdquirenteAtual" rows="3"></textarea>
-                <small class="hint">Ex.: Visa, Master, Elo.</small>
+                <small class="hint">Ex: Visa, Master, Elo.</small>
                 <small class="error"></small>
               </div>
 
@@ -226,20 +231,6 @@
                 <label for="bandeirasSegundaAdquirente">Bandeiras que serão utilizadas nessa adquirente *</label>
                 <textarea id="bandeirasSegundaAdquirente" name="bandeirasSegundaAdquirente" rows="3"></textarea>
                 <small class="hint">Informe somente as bandeiras que não serão usadas na adquirente atual.</small>
-                <small class="error"></small>
-              </div>
-
-              <div class="field">
-                <label for="numeroLogicoInclusao" id="numeroLogicoInclusaoLabel">Número lógico da adquirente que deseja acrescentar *</label>
-                <input id="numeroLogicoInclusao" name="numeroLogicoInclusao" type="text" />
-                <small class="hint strong-hint" id="numeroLogicoInclusaoHint">Selecione a segunda adquirente para ver a regra obrigatória.</small>
-                <small class="error"></small>
-              </div>
-
-              <div class="field">
-                <label for="numeroRedeInclusao">Número Rede da adquirente que deseja acrescentar *</label>
-                <input id="numeroRedeInclusao" name="numeroRedeInclusao" type="text" />
-                <small class="hint" id="numeroRedeInclusaoHint">Selecione a segunda adquirente para saber qual código informar.</small>
                 <small class="error"></small>
               </div>
             </div>
