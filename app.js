@@ -79,6 +79,10 @@ const regrasPix = {
   BANRISUL: ["Client ID", "Client Secret", "Chave_Dict"]
 };
 
+const placeholdersCamposPix = {
+  "BANCO BRADESCO::Chave Aleatória": "Chave aleatória criada seguindo o procedimento acima"
+};
+
 const guiasPix = {
   "BANCO DO BRASIL": {
     title: "Banco do Brasil",
@@ -160,6 +164,11 @@ const instrucoesAnexoPix = {
     message: "Encaminhe o certificado e a Private Key enviados pela PagSeguro.",
     hint: "Depois de abrir o WhatsApp, anexe os dois arquivos na conversa.",
     value: "Certificado e Private Key serão encaminhados como anexo no WhatsApp."
+  },
+  "BANCO SICREDI::Comprovante do portal da Sicredi": {
+    message: "Ao gerar as credenciais conforme orientado no PDF acima, a Sicredi irá disponibilizar um comprovante em formato PDF.",
+    hint: "Por gentileza, encaminhe esse comprovante juntamente com as credenciais geradas.",
+    value: "Comprovante do portal da Sicredi será encaminhado em PDF junto com as credenciais fornecidas."
   }
 };
 
@@ -671,7 +680,7 @@ function updateRequestVisibility() {
     numeroLogicoLabel.textContent = "Número lógico *";
     numeroRedeHint.textContent = getNumeroRedeHint("");
     adquirenteHint.textContent = "Selecione a adquirente.";
-    adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
+    if (adquirenteRuleText) adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
   } else {
     updateAdquirenteRule();
     updatePinpadModels();
@@ -715,14 +724,14 @@ function updateAdquirenteRule() {
     numeroLogicoLabel.textContent = "Número lógico *";
     numeroRedeHint.textContent = getNumeroRedeHint("");
     adquirenteHint.textContent = "Selecione a adquirente";
-    adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
+    if (adquirenteRuleText) adquirenteRuleText.textContent = "Selecione a adquirente para exibir a regra correta do número lógico ou Código SAK.";
     return;
   }
 
   numeroLogicoLabel.textContent = `${regra.label} *`;
   numeroRedeHint.textContent = getNumeroRedeHint(adquirente.value);
   adquirenteHint.textContent = regra.hint;
-  adquirenteRuleText.textContent = regra.ruleText;
+  if (adquirenteRuleText) adquirenteRuleText.textContent = regra.ruleText;
 
   validateFieldWhenAllowed(numeroLogico);
 }
@@ -820,6 +829,7 @@ function createPixFields() {
 
   campos.forEach((campo) => {
     const key = toFieldKey(campo);
+    const placeholderCampo = placeholdersCamposPix[`${banco}::${campo}`] || "";
     const attachmentInstruction = getPixAttachmentInstruction(banco, campo);
     const wrapper = document.createElement("div");
 
@@ -836,7 +846,7 @@ function createPixFields() {
       wrapper.className = "field";
       wrapper.innerHTML = `
         <label for="pix_${key}">${campo} *</label>
-        <input id="pix_${key}" name="pix_${key}" type="text" ${campo.toLowerCase() === "cnpj" ? 'placeholder="Informe o CNPJ" data-mask="cnpj"' : ""} data-pix-label="${campo}" required />
+        <input id="pix_${key}" name="pix_${key}" type="text" ${campo.toLowerCase() === "cnpj" ? 'placeholder="Informe o CNPJ" data-mask="cnpj"' : placeholderCampo ? `placeholder="${placeholderCampo}"` : ""} data-pix-label="${campo}" required />
         <small class="error"></small>
       `;
     }
