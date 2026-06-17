@@ -114,14 +114,9 @@
                 <option value="troca">Troca de adquirente</option>
                 <option value="inclusao">Inclusão de adquirente</option>
               </select>
-              <small class="hint">Escolha se a solicitação é uma troca completa ou a inclusão de uma segunda adquirente.</small>
+              <small class="hint">Escolha se a solicitação é uma troca completa ou a inclusão de uma adquirente secundária.</small>
               <small class="error"></small>
             </div>
-          </div>
-
-          <div class="attention-card attention-card--center">
-            <strong>Atenção</strong>
-            <p>Para troca ou inclusão de adquirente, informe apenas o CNPJ do estabelecimento e preencha os dados da adquirente abaixo.</p>
           </div>
 
           <div class="grid adquirente-grid hidden" id="trocaAdquirenteFields">
@@ -159,14 +154,14 @@
             </div>
 
             <div class="field">
-              <label for="numeroLogicoTroca" id="numeroLogicoTrocaLabel">Número lógico *</label>
+              <label for="numeroLogicoTroca" id="numeroLogicoTrocaLabel">Número lógico da nova adquirente *</label>
               <input id="numeroLogicoTroca" name="numeroLogicoTroca" type="text" />
               <small class="hint strong-hint" id="numeroLogicoTrocaHint">Selecione a nova adquirente para ver a regra obrigatória.</small>
               <small class="error"></small>
             </div>
 
             <div class="field">
-              <label for="numeroRedeTroca">Número Rede *</label>
+              <label for="numeroRedeTroca">Número Rede da nova adquirente *</label>
               <input id="numeroRedeTroca" name="numeroRedeTroca" type="text" />
               <small class="hint" id="numeroRedeTrocaHint">Selecione a nova adquirente para saber qual código informar.</small>
               <small class="error"></small>
@@ -205,7 +200,7 @@
               </div>
 
               <div class="field">
-                <label for="segundaAdquirenteInclusao">Segunda adquirente *</label>
+                <label for="segundaAdquirenteInclusao">Adquirente secundária *</label>
                 <select id="segundaAdquirenteInclusao" name="segundaAdquirenteInclusao">
                   <option value="">Selecione</option>
                   <option value="REDE">REDE</option>
@@ -231,6 +226,20 @@
                 <label for="bandeirasSegundaAdquirente">Bandeiras que serão utilizadas nessa adquirente *</label>
                 <textarea id="bandeirasSegundaAdquirente" name="bandeirasSegundaAdquirente" rows="3"></textarea>
                 <small class="hint">Informe somente as bandeiras que não serão usadas na adquirente atual.</small>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="numeroLogicoInclusao" id="numeroLogicoInclusaoLabel">Número lógico da adquirente que deseja acrescentar *</label>
+                <input id="numeroLogicoInclusao" name="numeroLogicoInclusao" type="text" />
+                <small class="hint strong-hint" id="numeroLogicoInclusaoHint">Selecione a adquirente secundária para ver a regra obrigatória.</small>
+                <small class="error"></small>
+              </div>
+
+              <div class="field">
+                <label for="numeroRedeInclusao">Número Rede da adquirente que deseja acrescentar *</label>
+                <input id="numeroRedeInclusao" name="numeroRedeInclusao" type="text" />
+                <small class="hint" id="numeroRedeInclusaoHint">Selecione a adquirente secundária para saber qual código informar.</small>
                 <small class="error"></small>
               </div>
             </div>

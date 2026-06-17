@@ -72,7 +72,7 @@ const regrasPix = {
   "BANCO BRADESCO": ["Chave Aleatória"],
   "BANCO ITAU": ["Chave PIX"],
   "BANCO MERCADO PAGO": ["Public Key", "Access Token", "Client ID", "Client Secret", "Chave PIX"],
-  "BANCO PAGSEGURO (PAGBANK)": ["CNPJ", "Certificado e Private Key", "Client ID", "Client Secret", "Chave PIX"],
+  "BANCO PAGSEGURO (PAGBANK)": ["Certificado e Private Key", "Client ID", "Client Secret", "Chave PIX"],
   "BANCO SANTANDER": ["Chave PIX", "Client ID", "Secret Key"],
   "BANCO SICOOB": ["Chave PIX", "Cliente ID"],
   "BANCO SICREDI": ["Chave PIX", "Client ID", "Client Secret", "Comprovante do portal da Sicredi"],
@@ -157,7 +157,7 @@ DADOS DO INTEGRADOR:
 
 const instrucoesAnexoPix = {
   "BANCO PAGSEGURO (PAGBANK)::Certificado e Private Key": {
-    message: "Encaminhe o certificado e o Private Key enviados pela PagSeguro.",
+    message: "Encaminhe o certificado e a Private Key enviados pela PagSeguro.",
     hint: "Depois de abrir o WhatsApp, anexe os dois arquivos na conversa.",
     value: "Certificado e Private Key serão encaminhados como anexo no WhatsApp."
   }
@@ -221,6 +221,7 @@ const bandeirasAdquirenteAtual = document.querySelector("#bandeirasAdquirenteAtu
 const bandeirasSegundaAdquirente = document.querySelector("#bandeirasSegundaAdquirente");
 
 let pinpadModeloOutro = null;
+let hasTriedSubmit = false;
 
 const onlyDigits = (value) => value.replace(/\D/g, "");
 
@@ -271,7 +272,7 @@ function ensurePinpadOutroField() {
 
   if (!pinpadModeloOutro.dataset.listenerAdded) {
     pinpadModeloOutro.addEventListener("input", () => {
-      validateField(pinpadModeloOutro);
+      validateFieldWhenAllowed(pinpadModeloOutro);
       updateProgress();
       updateSubmitState();
     });
@@ -528,11 +529,13 @@ function clearHiddenFields(container) {
 }
 
 function resetTrocaAdquirenteRule() {
-  numeroLogicoTrocaLabel.textContent = "Número lógico *";
+  numeroLogicoTrocaLabel.textContent = "Número lógico da nova adquirente *";
   numeroLogicoTrocaHint.textContent = "Selecione a nova adquirente para ver a regra obrigatória.";
   numeroRedeTrocaHint.textContent = getNumeroRedeHint("");
   trocaAdquirenteRuleText.textContent = "Selecione a nova adquirente para exibir a regra correta do número lógico ou Código SAK.";
   trocaAdquirenteRuleCard.classList.add("hidden");
+  setError(numeroLogicoTroca, "");
+  setError(numeroRedeTroca, "");
 }
 
 function updateTrocaAdquirenteRule() {
@@ -540,22 +543,21 @@ function updateTrocaAdquirenteRule() {
 
   if (!regra) {
     resetTrocaAdquirenteRule();
-    validateField(numeroLogicoTroca);
     return;
   }
 
-  numeroLogicoTrocaLabel.textContent = `${regra.label} *`;
+  numeroLogicoTrocaLabel.textContent = `${regra.label} da nova adquirente *`;
   numeroLogicoTrocaHint.textContent = regra.hint;
   numeroRedeTrocaHint.textContent = getNumeroRedeHint(novaAdquirenteTroca.value);
   trocaAdquirenteRuleText.textContent = regra.ruleText;
   trocaAdquirenteRuleCard.classList.remove("hidden");
 
-  validateField(numeroLogicoTroca);
+  validateFieldWhenAllowed(numeroLogicoTroca);
 }
 
 function resetInclusaoAdquirenteRule() {
   numeroLogicoInclusaoLabel.textContent = "Número lógico da adquirente que deseja acrescentar *";
-  numeroLogicoInclusaoHint.textContent = "Selecione a segunda adquirente para ver a regra obrigatória.";
+  numeroLogicoInclusaoHint.textContent = "Selecione a adquirente secundária para ver a regra obrigatória.";
   numeroRedeInclusaoHint.textContent = getNumeroRedeHint("");
 }
 
@@ -564,7 +566,7 @@ function updateInclusaoAdquirenteRule() {
 
   if (!regra) {
     resetInclusaoAdquirenteRule();
-    validateField(numeroLogicoInclusao);
+    validateFieldWhenAllowed(numeroLogicoInclusao);
     return;
   }
 
@@ -572,7 +574,7 @@ function updateInclusaoAdquirenteRule() {
   numeroLogicoInclusaoHint.textContent = regra.hint;
   numeroRedeInclusaoHint.textContent = getNumeroRedeHint(segundaAdquirenteInclusao.value);
 
-  validateField(numeroLogicoInclusao);
+  validateFieldWhenAllowed(numeroLogicoInclusao);
 }
 
 function updateAdquirenteChangeVisibility() {
@@ -585,10 +587,8 @@ function updateAdquirenteChangeVisibility() {
   inclusaoAdquirenteFields.classList.toggle("hidden", !isInclusao);
   tipoAlteracaoAdquirente.required = showChange;
 
-  setRequired(
-    [adquirenteAtualTroca, novaAdquirenteTroca, numeroLogicoTroca, numeroRedeTroca],
-    isTroca
-  );
+  setRequired([adquirenteAtualTroca, novaAdquirenteTroca], isTroca);
+  setRequired([numeroLogicoTroca, numeroRedeTroca], isTroca && Boolean(novaAdquirenteTroca.value));
   setRequired(
     [
       adquirenteAtualInclusao,
@@ -724,7 +724,7 @@ function updateAdquirenteRule() {
   adquirenteHint.textContent = regra.hint;
   adquirenteRuleText.textContent = regra.ruleText;
 
-  validateField(numeroLogico);
+  validateFieldWhenAllowed(numeroLogico);
 }
 
 function updatePinpadModels() {
@@ -756,7 +756,7 @@ function updatePinpadModels() {
   } else {
     pinpadModelo.classList.remove("hidden");
     pinpadModelo.disabled = false;
-    pinpadModelo.required = needsTef();
+    pinpadModelo.required = needsTef() && Boolean(marca);
 
     if (pinpadModeloOutro) {
       pinpadModeloOutro.classList.add("hidden");
@@ -785,10 +785,12 @@ function updatePinpadModels() {
       : "Modelos aceitos serão exibidos conforme a marca.";
   }
 
-  if (isOutro && pinpadModeloOutro) {
-    validateField(pinpadModeloOutro);
+  if (!marca) {
+    setError(pinpadModelo, "");
+  } else if (isOutro && pinpadModeloOutro) {
+    validateFieldWhenAllowed(pinpadModeloOutro);
   } else {
-    validateField(pinpadModelo);
+    validateFieldWhenAllowed(pinpadModelo);
   }
 
   updateProgress();
@@ -824,12 +826,11 @@ function createPixFields() {
     if (attachmentInstruction) {
       wrapper.className = "field field--full";
       wrapper.innerHTML = `
-        <label class="check check--attachment" for="pix_${key}">
-          <input id="pix_${key}" name="pix_${key}" type="checkbox" data-pix-label="${campo}" data-pix-value="${attachmentInstruction.value}" required />
-          <span>${attachmentInstruction.message}</span>
-        </label>
-        <small class="hint">${attachmentInstruction.hint}</small>
-        <small class="error"></small>
+        <div class="attention-card pix-attention-card" data-pix-label="${campo}" data-pix-value="${attachmentInstruction.value}">
+          <strong>Atenção</strong>
+          <p>${attachmentInstruction.message}</p>
+          <small>${attachmentInstruction.hint}</small>
+        </div>
       `;
     } else {
       wrapper.className = "field";
@@ -890,12 +891,14 @@ function getFieldError(input) {
 
     const regra = regrasAdquirentes[segundaAdquirenteInclusao.value];
 
-    if (!regra) return "Selecione a segunda adquirente antes de preencher.";
+    if (!regra) return "Selecione a adquirente secundária antes de preencher.";
 
     if (!regra.validate(value)) return regra.error;
   }
 
   if (input.id === "pinpadModelo" && needsTef() && pinpadMarca.value !== "Outro") {
+    if (!pinpadMarca.value) return "";
+
     if (!value) return "Selecione o modelo do PINPAD.";
 
     const modelos = modelosPinpad[pinpadMarca.value] || [];
@@ -928,6 +931,13 @@ function validateField(input) {
   return !message;
 }
 
+function validateFieldWhenAllowed(input) {
+  if (hasTriedSubmit) return validateField(input);
+
+  setError(input, "");
+  return true;
+}
+
 function getRequiredIds() {
   const requiredIds = ["tipoSolicitacao"];
 
@@ -949,7 +959,7 @@ function getRequiredIds() {
 
     if (pinpadMarca.value === "Outro") {
       requiredIds.push("pinpadModeloOutro");
-    } else {
+    } else if (pinpadMarca.value) {
       requiredIds.push("pinpadModelo");
     }
   }
@@ -958,7 +968,11 @@ function getRequiredIds() {
     requiredIds.push("tipoAlteracaoAdquirente");
 
     if (tipoAlteracaoAdquirente.value === "troca") {
-      requiredIds.push("adquirenteAtualTroca", "novaAdquirenteTroca", "numeroLogicoTroca", "numeroRedeTroca");
+      requiredIds.push("adquirenteAtualTroca", "novaAdquirenteTroca");
+
+      if (novaAdquirenteTroca.value) {
+        requiredIds.push("numeroLogicoTroca", "numeroRedeTroca");
+      }
     }
 
     if (tipoAlteracaoAdquirente.value === "inclusao") {
@@ -1019,6 +1033,10 @@ function getFormData() {
     }
 
     pixCampos[input.dataset.pixLabel] = input.value.trim();
+  });
+
+  document.querySelectorAll("#pixDynamicFields [data-pix-label][data-pix-value]").forEach((item) => {
+    pixCampos[item.dataset.pixLabel] = item.dataset.pixValue;
   });
 
   data.pixCampos = pixCampos;
@@ -1109,10 +1127,10 @@ function buildSummary(data, mask = true) {
       addLine(lines, "Tipo de alteração", "Inclusão de adquirente");
       addLine(lines, "Adquirente Principal", data.adquirenteAtualInclusao);
       addLine(lines, "Bandeiras aceitas na adquirente atual", data.bandeirasAdquirenteAtual);
-      addLine(lines, "Adquirente Secundaria", data.segundaAdquirenteInclusao);
+      addLine(lines, "Adquirente secundária", data.segundaAdquirenteInclusao);
       addLine(lines, regraInclusao?.label || "Número lógico", data.numeroLogicoInclusao);
       addLine(lines, "Número Rede", data.numeroRedeInclusao);
-      addLine(lines, "Bandeiras utilizadas na segunda adquirente", data.bandeirasSegundaAdquirente);
+      addLine(lines, "Bandeiras utilizadas na adquirente secundária", data.bandeirasSegundaAdquirente);
     }
   }
 
@@ -1172,6 +1190,8 @@ function focusFirstInvalidField() {
 }
 
 sendInfoBtn.addEventListener("click", () => {
+  hasTriedSubmit = true;
+
   if (!validateForm()) {
     showNotice("Preencha todos os campos obrigatórios corretamente antes de enviar.", "error");
     focusFirstInvalidField();
@@ -1193,7 +1213,7 @@ form.addEventListener("input", (event) => {
     event.target.value = maskCnpj(event.target.value);
   }
 
-  validateField(event.target);
+  validateFieldWhenAllowed(event.target);
   updateProgress();
   updateSubmitState();
 });
@@ -1208,7 +1228,7 @@ form.addEventListener("change", (event) => {
   if (event.target.id === "bancoPix") createPixFields();
 
   if (event.target.matches("input, select, textarea")) {
-    validateField(event.target);
+    validateFieldWhenAllowed(event.target);
   }
 
   updateProgress();

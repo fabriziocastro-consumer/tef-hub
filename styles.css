@@ -289,6 +289,17 @@ textarea:disabled {
   margin: 0;
 }
 
+.pix-attention-card {
+  margin: 0;
+  text-align: center;
+}
+
+.pix-attention-card small {
+  display: block;
+  margin-top: 6px;
+  color: #7c2d12;
+}
+
 .error {
   min-height: 16px;
   color: var(--danger);
