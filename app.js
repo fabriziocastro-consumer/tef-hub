@@ -566,7 +566,6 @@ function updateTrocaAdquirenteRule() {
 
 function resetInclusaoAdquirenteRule() {
   numeroLogicoInclusaoLabel.textContent = "Número lógico da adquirente que deseja acrescentar *";
-  numeroLogicoInclusaoHint.textContent = "Selecione a adquirente secundária para ver a regra obrigatória.";
   numeroRedeInclusaoHint.textContent = getNumeroRedeHint("");
 }
 
