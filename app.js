@@ -1135,11 +1135,11 @@ function buildSummary(data, mask = true) {
 
       addLine(lines, "Tipo de alteração", "Inclusão de adquirente");
       addLine(lines, "Adquirente Principal", data.adquirenteAtualInclusao);
-      addLine(lines, "Bandeiras aceitas na adquirente atual", data.bandeirasAdquirenteAtual);
+      addLine(lines, "Bandeiras aceitas na adquirente principal", data.bandeirasAdquirenteAtual);
       addLine(lines, "Adquirente secundária", data.segundaAdquirenteInclusao);
       addLine(lines, regraInclusao?.label || "Número lógico", data.numeroLogicoInclusao);
       addLine(lines, "Número Rede", data.numeroRedeInclusao);
-      addLine(lines, "Bandeiras utilizadas na adquirente secundária", data.bandeirasSegundaAdquirente);
+      addLine(lines, "Bandeiras que serão utilizadas na adquirente secundária", data.bandeirasSegundaAdquirente);
     }
   }
 
