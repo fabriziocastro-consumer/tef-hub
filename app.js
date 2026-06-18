@@ -10,59 +10,66 @@ const tiposSolicitacao = {
 const regrasAdquirentes = {
   REDE: {
     label: "Número lógico",
-    ruleText: "REDE: número lógico obrigatório com exatamente 15 dígitos numéricos.",
-    hint: "Obrigatório: 15 dígitos numéricos.",
-    validate: (v) => /^\d{15}$/.test(v),
-    error: "Para REDE, informe exatamente 15 dígitos numéricos."
+    ruleText: "REDE: número lógico obrigatório com exatamente 15 caracteres.",
+    hint: "Obrigatório: 15 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{15}$/.test(v),
+    error: "Para REDE, informe exatamente 15 caracteres."
   },
   CIELO: {
     label: "Número lógico",
-    ruleText: "CIELO: número lógico obrigatório com exatamente 9 dígitos numéricos. Ex: 12345678-9.",
-    hint: "Obrigatório: 9 dígitos numéricos. Ex: 12345678-9.",
-    validate: (v) => /^\d{9}$/.test(v),
-    error: "Para CIELO, informe exatamente 9 dígitos numéricos."
+    ruleText: "CIELO: número lógico obrigatório com exatamente 9 caracteres.",
+    hint: "Obrigatório: 9 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{9}$/.test(v),
+    error: "Para CIELO, informe exatamente 9 caracteres."
   },
   STONE: {
     label: "Código SAK",
-    ruleText: "STONE: Código SAK alfanumérico, com exatamente 32 caracteres",
+    ruleText: "STONE: Código SAK obrigatório, alfanumérico, com exatamente 32 caracteres.",
     hint: "Obrigatório: 32 caracteres alfanuméricos.",
     validate: (v) => /^[A-Za-z0-9]{32}$/.test(v),
-    error: "Para STONE, o Código SAK deve ser alfanumérico"
+    error: "Para STONE, o Código SAK deve ser alfanumérico e conter exatamente 32 caracteres."
   },
   "VERO / BANRISUL": {
     label: "Número lógico",
-    ruleText: "VERO / BANRISUL: número lógico obrigatório com exatamente 15 dígitos numéricos.",
-    hint: "Obrigatório: 15 dígitos numéricos.",
-    validate: (v) => /^\d{15}$/.test(v),
-    error: "Para VERO / BANRISUL, informe exatamente 15 dígitos numéricos."
+    ruleText: "VERO / BANRISUL: número lógico obrigatório com exatamente 15 caracteres.",
+    hint: "Obrigatório: 15 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{15}$/.test(v),
+    error: "Para VERO / BANRISUL, informe exatamente 15 caracteres."
   },
   SICREDI: {
     label: "Número lógico",
-    ruleText: "SICREDI: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex: T1234567.",
-    hint: "Obrigatório: inicia com T + 7 números. Ex: T1234567.",
-    validate: (v) => /^T\d{7}$/i.test(v),
-    error: "Para SICREDI, informe T + 7 números, totalizando 8 caracteres. Ex: T1234567."
+    ruleText: "SICREDI: número lógico obrigatório com exatamente 8 caracteres.",
+    hint: "Obrigatório: 8 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{8}$/.test(v),
+    error: "Para SICREDI, informe exatamente 8 caracteres."
   },
   "SIPAG / SICOOB": {
     label: "Número lógico",
-    ruleText: "SIPAG / SICOOB: número lógico obrigatório inicia com a letra T e possui 8 caracteres no total. Ex: T1234567.",
-    hint: "Obrigatório: inicia com T + 7 números. Ex: T1234567.",
-    validate: (v) => /^T\d{7}$/i.test(v),
-    error: "Para SIPAG / SICOOB, informe T + 7 números, totalizando 8 caracteres. Ex: T1234567."
+    ruleText: "SIPAG / SICOOB: número lógico obrigatório com exatamente 8 caracteres.",
+    hint: "Obrigatório: 8 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{8}$/.test(v),
+    error: "Para SIPAG / SICOOB, informe exatamente 8 caracteres."
   },
   PAGSEGURO: {
     label: "Número lógico",
-    ruleText: "PAGSEGURO: número lógico obrigatório com 15 caracteres, podendo iniciar com T. Ex: T1234567891011.",
-    hint: "Obrigatório: 15 caracteres, pode iniciar com T.",
-    validate: (v) => /^T?\d{14,15}$/i.test(v),
-    error: "Para PAGSEGURO, informe 15 caracteres. Pode iniciar com T."
+    ruleText: "PAGSEGURO: número lógico obrigatório com exatamente 15 caracteres.",
+    hint: "Obrigatório: 15 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{15}$/.test(v),
+    error: "Para PAGSEGURO, informe exatamente 15 caracteres."
   },
   GETNET: {
     label: "Número lógico",
-    ruleText: "GETNET: número lógico obrigatório com exatamente 8 dígitos numéricos.",
-    hint: "Obrigatório: 8 dígitos numéricos.",
-    validate: (v) => /^\d{8}$/.test(v),
-    error: "Para GETNET, informe exatamente 8 dígitos numéricos."
+    ruleText: "GETNET: número lógico obrigatório com exatamente 8 caracteres.",
+    hint: "Obrigatório: 8 caracteres.",
+    validate: (v) => /^[A-Za-z0-9]{8}$/.test(v),
+    error: "Para GETNET, informe exatamente 8 caracteres."
+  },
+  OUTRA: {
+    label: "Número lógico",
+    ruleText: "OUTRA: confirme com a adquirente qual é o Número Lógico e o Número Rede antes de enviar.",
+    hint: "Por gentileza, verifique se o Número Rede e o Número Lógico foram fornecidos pela adquirente.",
+    validate: (v) => Boolean(v.trim()),
+    error: "Informe o Número Lógico fornecido pela adquirente."
   }
 };
 
@@ -232,7 +239,17 @@ const bandeirasSegundaAdquirente = document.querySelector("#bandeirasSegundaAdqu
 let pinpadModeloOutro = null;
 let hasTriedSubmit = false;
 
+const ADQUIRENTE_OUTRA_VALUE = "OUTRA";
+
 const onlyDigits = (value) => value.replace(/\D/g, "");
+
+const adquirenteOutroConfigs = [
+  { select: adquirente, inputId: "adquirenteOutra", name: "adquirenteOutra", label: "Descreva a adquirente" },
+  { select: adquirenteAtualTroca, inputId: "adquirenteAtualTrocaOutra", name: "adquirenteAtualTrocaOutra", label: "Descreva a adquirente atual" },
+  { select: novaAdquirenteTroca, inputId: "novaAdquirenteTrocaOutra", name: "novaAdquirenteTrocaOutra", label: "Descreva a nova adquirente" },
+  { select: adquirenteAtualInclusao, inputId: "adquirenteAtualInclusaoOutra", name: "adquirenteAtualInclusaoOutra", label: "Descreva a adquirente principal" },
+  { select: segundaAdquirenteInclusao, inputId: "segundaAdquirenteInclusaoOutra", name: "segundaAdquirenteInclusaoOutra", label: "Descreva a adquirente secundária" }
+];
 
 function ensureOutroOption() {
   if (!pinpadMarca) return;
@@ -245,6 +262,75 @@ function ensureOutroOption() {
     option.textContent = "Outro";
     pinpadMarca.appendChild(option);
   }
+}
+
+function ensureAdquirenteOutraFields() {
+  adquirenteOutroConfigs.forEach(({ select, inputId, name, label }) => {
+    if (!select) return;
+
+    const hasOutra = Array.from(select.options).some((option) => option.value === ADQUIRENTE_OUTRA_VALUE);
+
+    if (!hasOutra) {
+      const option = document.createElement("option");
+      option.value = ADQUIRENTE_OUTRA_VALUE;
+      option.textContent = "OUTRA";
+      select.appendChild(option);
+    }
+
+    const field = select.closest(".field");
+    if (!field) return;
+
+    let input = document.getElementById(inputId);
+
+    if (!input) {
+      input = document.createElement("input");
+      input.id = inputId;
+      input.name = name;
+      input.type = "text";
+      input.placeholder = label;
+      input.className = "hidden";
+
+      const warning = document.createElement("small");
+      warning.id = `${inputId}Warning`;
+      warning.className = "hint warning-hint hidden";
+      warning.textContent = "Por gentileza, verifique se o Número Rede e o Número Lógico foram fornecidos pela adquirente.";
+
+      const error = field.querySelector(".error");
+      field.insertBefore(input, error || null);
+      field.insertBefore(warning, error || null);
+
+      input.addEventListener("input", () => {
+        validateFieldWhenAllowed(input);
+        updateProgress();
+        updateSubmitState();
+      });
+    }
+  });
+
+  updateAdquirenteOutraFields();
+}
+
+function updateAdquirenteOutraFields() {
+  adquirenteOutroConfigs.forEach(({ select, inputId }) => {
+    if (!select) return;
+
+    const input = document.getElementById(inputId);
+    const warning = document.getElementById(`${inputId}Warning`);
+    const show = !select.closest(".hidden") && select.value === ADQUIRENTE_OUTRA_VALUE;
+
+    if (input) {
+      input.classList.toggle("hidden", !show);
+      input.disabled = !show;
+      input.required = show;
+
+      if (!show) {
+        input.value = "";
+        setError(input, "");
+      }
+    }
+
+    if (warning) warning.classList.toggle("hidden", !show);
+  });
 }
 
 function ensurePinpadOutroField() {
@@ -394,6 +480,20 @@ function dataNeedsAdquirenteChange(data) {
   return data.tipoSolicitacao === "troca_inclusao_adquirente";
 }
 
+function getAdquirenteDisplay(data, fieldName) {
+  const outroFields = {
+    adquirente: "adquirenteOutra",
+    adquirenteAtualTroca: "adquirenteAtualTrocaOutra",
+    novaAdquirenteTroca: "novaAdquirenteTrocaOutra",
+    adquirenteAtualInclusao: "adquirenteAtualInclusaoOutra",
+    segundaAdquirenteInclusao: "segundaAdquirenteInclusaoOutra"
+  };
+
+  if (data[fieldName] !== ADQUIRENTE_OUTRA_VALUE) return data[fieldName];
+
+  return data[outroFields[fieldName]] || "OUTRA";
+}
+
 function setError(input, message) {
   if (!input) return;
 
@@ -541,8 +641,8 @@ function resetTrocaAdquirenteRule() {
   numeroLogicoTrocaLabel.textContent = "Número lógico da nova adquirente *";
   numeroLogicoTrocaHint.textContent = "Selecione a nova adquirente para ver a regra obrigatória.";
   numeroRedeTrocaHint.textContent = getNumeroRedeHint("");
-  trocaAdquirenteRuleText.textContent = "Selecione a nova adquirente para exibir a regra correta do número lógico ou Código SAK.";
-  trocaAdquirenteRuleCard.classList.add("hidden");
+  if (trocaAdquirenteRuleText) trocaAdquirenteRuleText.textContent = "";
+  if (trocaAdquirenteRuleCard) trocaAdquirenteRuleCard.classList.add("hidden");
   setError(numeroLogicoTroca, "");
   setError(numeroRedeTroca, "");
 }
@@ -558,8 +658,8 @@ function updateTrocaAdquirenteRule() {
   numeroLogicoTrocaLabel.textContent = `${regra.label} da nova adquirente *`;
   numeroLogicoTrocaHint.textContent = regra.hint;
   numeroRedeTrocaHint.textContent = getNumeroRedeHint(novaAdquirenteTroca.value);
-  trocaAdquirenteRuleText.textContent = regra.ruleText;
-  trocaAdquirenteRuleCard.classList.remove("hidden");
+  if (trocaAdquirenteRuleText) trocaAdquirenteRuleText.textContent = "";
+  if (trocaAdquirenteRuleCard) trocaAdquirenteRuleCard.classList.add("hidden");
 
   validateFieldWhenAllowed(numeroLogicoTroca);
 }
@@ -613,6 +713,7 @@ function updateAdquirenteChangeVisibility() {
     clearField(tipoAlteracaoAdquirente);
     clearHiddenFields(trocaAdquirenteSection);
     resetTrocaAdquirenteRule();
+    updateAdquirenteOutraFields();
     return;
   }
 
@@ -631,6 +732,7 @@ function updateAdquirenteChangeVisibility() {
   }
 
   updateSectionNumbers();
+  updateAdquirenteOutraFields();
   updateProgress();
   updateSubmitState();
 }
@@ -686,6 +788,7 @@ function updateRequestVisibility() {
   }
 
   updateAdquirenteChangeVisibility();
+  updateAdquirenteOutraFields();
 
   if (!showPix) {
     clearField(bancoPix);
@@ -964,7 +1067,11 @@ function getRequiredIds() {
   }
 
   if (needsTef()) {
-    requiredIds.push("adquirente", "numeroLogico", "pinpadMarca", "quantidadeTerminais");
+    requiredIds.push("adquirente", "numeroRede", "numeroLogico", "pinpadMarca", "quantidadeTerminais");
+
+    if (adquirente.value === ADQUIRENTE_OUTRA_VALUE) {
+      requiredIds.push("adquirenteOutra");
+    }
 
     if (pinpadMarca.value === "Outro") {
       requiredIds.push("pinpadModeloOutro");
@@ -978,6 +1085,14 @@ function getRequiredIds() {
 
     if (tipoAlteracaoAdquirente.value === "troca") {
       requiredIds.push("adquirenteAtualTroca", "novaAdquirenteTroca");
+
+      if (adquirenteAtualTroca.value === ADQUIRENTE_OUTRA_VALUE) {
+        requiredIds.push("adquirenteAtualTrocaOutra");
+      }
+
+      if (novaAdquirenteTroca.value === ADQUIRENTE_OUTRA_VALUE) {
+        requiredIds.push("novaAdquirenteTrocaOutra");
+      }
 
       if (novaAdquirenteTroca.value) {
         requiredIds.push("numeroLogicoTroca", "numeroRedeTroca");
@@ -993,6 +1108,14 @@ function getRequiredIds() {
         "bandeirasAdquirenteAtual",
         "bandeirasSegundaAdquirente"
       );
+
+      if (adquirenteAtualInclusao.value === ADQUIRENTE_OUTRA_VALUE) {
+        requiredIds.push("adquirenteAtualInclusaoOutra");
+      }
+
+      if (segundaAdquirenteInclusao.value === ADQUIRENTE_OUTRA_VALUE) {
+        requiredIds.push("segundaAdquirenteInclusaoOutra");
+      }
     }
   }
 
@@ -1098,7 +1221,7 @@ function buildSummary(data, mask = true) {
   if (dataNeedsTef(data)) {
     lines.push("");
     lines.push("DADOS DA ADQUIRENTE");
-    addLine(lines, "Adquirente afiliada", data.adquirente);
+    addLine(lines, "Adquirente afiliada", getAdquirenteDisplay(data, "adquirente"));
     addLine(lines, "Número rede/código cadastrado", data.numeroRede);
     addLine(lines, regra?.label || "Número lógico", data.numeroLogico);
 
@@ -1124,8 +1247,8 @@ function buildSummary(data, mask = true) {
       const regraTroca = regrasAdquirentes[data.novaAdquirenteTroca];
 
       addLine(lines, "Tipo de alteração", "Troca de adquirente");
-      addLine(lines, "Adquirente utilizada atualmente", data.adquirenteAtualTroca);
-      addLine(lines, "Nova adquirente", data.novaAdquirenteTroca);
+      addLine(lines, "Adquirente utilizada atualmente", getAdquirenteDisplay(data, "adquirenteAtualTroca"));
+      addLine(lines, "Nova adquirente", getAdquirenteDisplay(data, "novaAdquirenteTroca"));
       addLine(lines, regraTroca?.label || "Número lógico", data.numeroLogicoTroca);
       addLine(lines, "Número Rede", data.numeroRedeTroca);
     }
@@ -1134,9 +1257,9 @@ function buildSummary(data, mask = true) {
       const regraInclusao = regrasAdquirentes[data.segundaAdquirenteInclusao];
 
       addLine(lines, "Tipo de alteração", "Inclusão de adquirente");
-      addLine(lines, "Adquirente Principal", data.adquirenteAtualInclusao);
+      addLine(lines, "Adquirente Principal", getAdquirenteDisplay(data, "adquirenteAtualInclusao"));
       addLine(lines, "Bandeiras aceitas na adquirente principal", data.bandeirasAdquirenteAtual);
-      addLine(lines, "Adquirente secundária", data.segundaAdquirenteInclusao);
+      addLine(lines, "Adquirente secundária", getAdquirenteDisplay(data, "segundaAdquirenteInclusao"));
       addLine(lines, regraInclusao?.label || "Número lógico", data.numeroLogicoInclusao);
       addLine(lines, "Número Rede", data.numeroRedeInclusao);
       addLine(lines, "Bandeiras que serão utilizadas na adquirente secundária", data.bandeirasSegundaAdquirente);
@@ -1235,6 +1358,7 @@ form.addEventListener("change", (event) => {
   if (event.target.id === "segundaAdquirenteInclusao") updateInclusaoAdquirenteRule();
   if (event.target.id === "pinpadMarca") updatePinpadModels();
   if (event.target.id === "bancoPix") createPixFields();
+  if (adquirenteOutroConfigs.some(({ select }) => select === event.target)) updateAdquirenteOutraFields();
 
   if (event.target.matches("input, select, textarea")) {
     validateFieldWhenAllowed(event.target);
@@ -1245,6 +1369,7 @@ form.addEventListener("change", (event) => {
 });
 
 ensureOutroOption();
+ensureAdquirenteOutraFields();
 ensurePinpadOutroField();
 updateAdquirenteRule();
 updatePinpadModels();
