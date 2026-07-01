@@ -90,6 +90,9 @@ const placeholdersCamposPix = {
   "BANCO BRADESCO::Chave Aleatória": "Chave aleatória criada seguindo o procedimento acima"
 };
 
+const PIX_KEY_PLACEHOLDER = "Informe a chave PIX gerada conforme o PDF acima";
+const PIX_KEY_CONFIRMATION = "*Confirmo que a chave PIX foi gerada conforme o PDF*";
+
 const guiasPix = {
   "BANCO DO BRASIL": {
     title: "Banco do Brasil",
@@ -917,6 +920,15 @@ function toFieldKey(campo) {
     .replace(/^_|_$/g, "");
 }
 
+function isPixKeyField(label) {
+  return /chave/i.test(String(label || ""));
+}
+
+function getPixFieldPlaceholder(banco, campo) {
+  if (isPixKeyField(campo)) return PIX_KEY_PLACEHOLDER;
+  return placeholdersCamposPix[`${banco}::${campo}`] || "";
+}
+
 function createPixFields() {
   pixDynamicFields.innerHTML = "";
 
@@ -931,7 +943,7 @@ function createPixFields() {
 
   campos.forEach((campo) => {
     const key = toFieldKey(campo);
-    const placeholderCampo = placeholdersCamposPix[`${banco}::${campo}`] || "";
+    const placeholderCampo = getPixFieldPlaceholder(banco, campo);
     const attachmentInstruction = getPixAttachmentInstruction(banco, campo);
     const wrapper = document.createElement("div");
 
@@ -1271,9 +1283,18 @@ function buildSummary(data, mask = true) {
     lines.push("PIX NO TEF");
     addLine(lines, "Banco", data.bancoPix);
 
+    let hasPixKey = false;
+
     Object.entries(data.pixCampos || {}).forEach(([key, value]) => {
       addLine(lines, key, mask ? maskSensitive(key, value) : value);
+      if (isPixKeyField(key) && value) {
+        hasPixKey = true;
+      }
     });
+
+    if (hasPixKey) {
+      lines.push(PIX_KEY_CONFIRMATION);
+    }
   }
 
   if (data.observacoes && data.observacoes.trim()) {
