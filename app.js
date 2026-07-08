@@ -921,7 +921,15 @@ function toFieldKey(campo) {
 }
 
 function isPixKeyField(label) {
-  return /chave/i.test(String(label || ""));
+  const normalized = String(label || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return normalized === "chave pix" || normalized === "chave aleatoria";
 }
 
 function getPixFieldPlaceholder(banco, campo) {
