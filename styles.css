@@ -300,6 +300,12 @@ textarea:disabled {
   color: #7c2d12;
 }
 
+.pix-attention-card p,
+.pix-attention-card small {
+  font-weight: 800;
+  font-size: 13px;
+}
+
 .error {
   min-height: 16px;
   color: var(--danger);
@@ -480,6 +486,46 @@ textarea:disabled {
   background: #fee2e2;
   color: var(--danger);
   border: 1px solid #fecaca;
+}
+
+.pix-attention-card .check--attachment {
+  margin-top: 14px;
+  align-items: center;
+}
+
+.pix-attention-card .check--attachment span {
+  font-weight: 800;
+  color: #7c2d12;
+  font-size: 13px;
+}
+
+.field.invalid .pix-attention-card {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.10);
+}
+
+.attachment-reminder {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff7ed;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
+
+.attachment-reminder strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.attachment-reminder ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.attachment-reminder li {
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
 .footer {

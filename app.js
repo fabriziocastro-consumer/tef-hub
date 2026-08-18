@@ -83,15 +83,12 @@ const regrasPix = {
   "BANCO SANTANDER": ["Chave PIX", "Client ID", "Secret Key"],
   "BANCO SICOOB": ["Chave PIX", "Cliente ID"],
   "BANCO SICREDI": ["Chave PIX", "Client ID", "Client Secret", "Comprovante do portal da Sicredi"],
-  BANRISUL: ["Client ID", "Client Secret", "Chave_Dict"]
+  BANRISUL: ["Chave PIX", "Client ID", "Client Secret", "Chave_Dict"]
 };
 
 const placeholdersCamposPix = {
   "BANCO BRADESCO::Chave Aleatória": "Chave aleatória criada seguindo o procedimento acima"
 };
-
-const PIX_KEY_PLACEHOLDER = "Informe a chave PIX gerada conforme o PDF acima";
-const PIX_KEY_CONFIRMATION = "*Confirmo que a chave PIX foi gerada conforme o PDF*";
 
 const guiasPix = {
   "BANCO DO BRASIL": {
@@ -169,6 +166,8 @@ DADOS DO INTEGRADOR:
   }
 };
 
+const avisosPix = {};
+
 const instrucoesAnexoPix = {
   "BANCO PAGSEGURO (PAGBANK)::Certificado e Private Key": {
     message: "Encaminhe o certificado e a Private Key enviados pela PagSeguro.",
@@ -176,8 +175,8 @@ const instrucoesAnexoPix = {
     value: "Certificado e Private Key serão encaminhados como anexo no WhatsApp."
   },
   "BANCO SICREDI::Comprovante do portal da Sicredi": {
-    message: "Ao gerar as credenciais conforme orientado no PDF acima, a Sicredi irá disponibilizar um comprovante em formato PDF.",
-    hint: "Por gentileza, encaminhe esse comprovante juntamente com as credenciais geradas.",
+    message: "A chave PIX informada deve estar cadastrada na Sicredi. Ao gerar as credenciais conforme orientado no PDF acima, clique no botão imprimir para gerar o Comprovante em arquivo PDF.",
+    hint: "Por gentileza, encaminhe esse comprovante e solicite ao gerente da Sicredi a liberação do Client_ID e Client_Secret para utilizar o PIX no TEF. As credenciais só terão validade após essa liberação.",
     value: "Comprovante do portal da Sicredi será encaminhado em PDF junto com as credenciais fornecidas."
   }
 };
@@ -216,6 +215,8 @@ const pixDynamicFields = document.querySelector("#pixDynamicFields");
 const sendInfoBtn = document.querySelector("#sendInfoBtn");
 const sendHint = document.querySelector("#sendHint");
 const notice = document.querySelector("#notice");
+const attachmentReminder = document.querySelector("#attachmentReminder");
+const attachmentReminderList = document.querySelector("#attachmentReminderList");
 const trocaAdquirenteSection = document.querySelector("#trocaAdquirenteSection");
 const tipoAlteracaoAdquirente = document.querySelector("#tipoAlteracaoAdquirente");
 const trocaAdquirenteFields = document.querySelector("#trocaAdquirenteFields");
@@ -586,6 +587,7 @@ function updateEstabelecimentoVisibility() {
   const requiredWhenNotPixOnly = [
     "razaoSocial",
     "nomeFantasia",
+    "inscricaoEstadual",
     "proprietario",
     "cpf",
     "email",
@@ -611,7 +613,7 @@ function updateEstabelecimentoVisibility() {
   const cnpj = document.getElementById("cnpj");
 
   if (cnpj) {
-    cnpj.required = adquirenteChangeOnly;
+    cnpj.required = true;
     cnpj.closest(".field")?.classList.remove("hidden");
     setError(cnpj, "");
   }
@@ -933,7 +935,6 @@ function isPixKeyField(label) {
 }
 
 function getPixFieldPlaceholder(banco, campo) {
-  if (isPixKeyField(campo)) return PIX_KEY_PLACEHOLDER;
   return placeholdersCamposPix[`${banco}::${campo}`] || "";
 }
 
@@ -948,6 +949,19 @@ function createPixFields() {
   bancoHint.textContent = campos.length
     ? `Campos obrigatórios para ${banco}: ${campos.join(", ")}.`
     : "Selecione o banco para carregar os campos obrigatórios.";
+
+  const avisos = avisosPix[banco];
+  if (avisos && avisos.length) {
+    const avisoWrapper = document.createElement("div");
+    avisoWrapper.className = "field field--full";
+    avisoWrapper.innerHTML = `
+      <div class="attention-card pix-attention-card">
+        <strong>Atenção</strong>
+        <p>${avisos.join("<br />")}</p>
+      </div>
+    `;
+    pixDynamicFields.appendChild(avisoWrapper);
+  }
 
   campos.forEach((campo) => {
     const key = toFieldKey(campo);
@@ -1071,14 +1085,13 @@ function validateFieldWhenAllowed(input) {
 }
 
 function getRequiredIds() {
-  const requiredIds = ["tipoSolicitacao"];
+  const requiredIds = ["tipoSolicitacao", "cnpj"];
 
-  if (needsAdquirenteChange()) {
-    requiredIds.push("cnpj");
-  } else if (tipoSolicitacao.value !== "pix") {
+  if (!needsAdquirenteChange() && tipoSolicitacao.value !== "pix") {
     requiredIds.push(
       "razaoSocial",
       "nomeFantasia",
+      "inscricaoEstadual",
       "proprietario",
       "cpf",
       "email",
@@ -1179,11 +1192,7 @@ function getFormData() {
   const pixCampos = {};
 
   document.querySelectorAll("#pixDynamicFields input").forEach((input) => {
-    if (input.type === "checkbox") {
-      pixCampos[input.dataset.pixLabel] = input.checked ? input.dataset.pixValue : "";
-      return;
-    }
-
+    if (!input.dataset.pixLabel) return;
     pixCampos[input.dataset.pixLabel] = input.value.trim();
   });
 
@@ -1226,16 +1235,19 @@ function buildSummary(data, mask = true) {
 
   lines.push("");
   lines.push("DADOS DO ESTABELECIMENTO");
-  addLine(lines, "CNPJ", data.cnpj);
 
   if (data.tipoSolicitacao !== "pix" && !dataNeedsAdquirenteChange(data)) {
-    addLine(lines, "Razão Social", data.razaoSocial);
     addLine(lines, "Nome Fantasia", data.nomeFantasia);
+    addLine(lines, "Razão Social", data.razaoSocial);
+    addLine(lines, "CNPJ", data.cnpj);
     addLine(lines, "Inscrição Estadual", data.inscricaoEstadual);
+    lines.push("");
     addLine(lines, "Nome do proprietário", data.proprietario);
     addLine(lines, "CPF", data.cpf);
     addLine(lines, "E-mail", data.email);
     addLine(lines, "Telefone", data.telefone);
+  } else {
+    addLine(lines, "CNPJ", data.cnpj);
   }
 
   if (dataNeedsTef(data)) {
@@ -1291,18 +1303,9 @@ function buildSummary(data, mask = true) {
     lines.push("PIX NO TEF");
     addLine(lines, "Banco", data.bancoPix);
 
-    let hasPixKey = false;
-
     Object.entries(data.pixCampos || {}).forEach(([key, value]) => {
       addLine(lines, key, mask ? maskSensitive(key, value) : value);
-      if (isPixKeyField(key) && value) {
-        hasPixKey = true;
-      }
     });
-
-    if (hasPixKey) {
-      lines.push(PIX_KEY_CONFIRMATION);
-    }
   }
 
   if (data.observacoes && data.observacoes.trim()) {
@@ -1350,11 +1353,39 @@ function focusFirstInvalidField() {
   }
 }
 
+function getPendingAttachments(banco) {
+  if (!banco) return [];
+
+  return Object.entries(instrucoesAnexoPix)
+    .filter(([key]) => key.startsWith(`${banco}::`))
+    .map(([key, instrucao]) => ({
+      campo: key.split("::")[1],
+      hint: instrucao.hint
+    }));
+}
+
+function showAttachmentReminder(items) {
+  if (!attachmentReminder || !attachmentReminderList) return;
+
+  if (!items.length) {
+    attachmentReminder.classList.add("hidden");
+    attachmentReminderList.innerHTML = "";
+    return;
+  }
+
+  attachmentReminderList.innerHTML = items
+    .map((item) => `<li><strong>${item.campo}:</strong> ${item.hint}</li>`)
+    .join("");
+
+  attachmentReminder.classList.remove("hidden");
+}
+
 sendInfoBtn.addEventListener("click", () => {
   hasTriedSubmit = true;
 
   if (!validateForm()) {
     showNotice("Preencha todos os campos obrigatórios corretamente antes de enviar.", "error");
+    showAttachmentReminder([]);
     focusFirstInvalidField();
     updateSubmitState();
     return;
@@ -1362,9 +1393,11 @@ sendInfoBtn.addEventListener("click", () => {
 
   const data = getFormData();
   const text = buildSummary(data, false);
+  const pendingAttachments = getPendingAttachments(data.bancoPix);
 
   openWhatsApp(text);
   showNotice("WhatsApp aberto com a mensagem pronta para envio.", "success");
+  showAttachmentReminder(pendingAttachments);
 });
 
 form.addEventListener("input", (event) => {

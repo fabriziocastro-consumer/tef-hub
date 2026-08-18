@@ -66,14 +66,14 @@
             </div>
 
             <div class="field">
-              <label for="inscricaoEstadual">Inscrição Estadual</label>
-              <input id="inscricaoEstadual" name="inscricaoEstadual" type="text" placeholder="Isento ou número da IE" />
+              <label for="inscricaoEstadual">Inscrição Estadual *</label>
+              <input id="inscricaoEstadual" name="inscricaoEstadual" type="text" placeholder="Isento ou número da IE" required />
               <small class="error"></small>
             </div>
 
             <div class="field">
               <label for="proprietario">Nome do proprietário *</label>
-              <input id="proprietario" name="proprietario" type="text" required />
+              <input id="proprietario" name="proprietario" type="text" placeholder="Nome e Sobrenome" required />
               <small class="error"></small>
             </div>
 
@@ -394,6 +394,11 @@ Verifone: VX800, VX820, P200
         </div>
 
         <div class="notice" id="notice" hidden></div>
+
+        <div class="attachment-reminder hidden" id="attachmentReminder" aria-live="polite">
+          <strong>📎 Não se esqueça de anexar no WhatsApp que acabou de abrir:</strong>
+          <ul id="attachmentReminderList"></ul>
+        </div>
       </form>
     </section>
   </main>
