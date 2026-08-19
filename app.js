@@ -82,12 +82,13 @@ const regrasPix = {
   "BANCO PAGSEGURO (PAGBANK)": ["Certificado e Private Key", "Client ID", "Client Secret", "Chave PIX"],
   "BANCO SANTANDER": ["Chave PIX", "Client ID", "Secret Key"],
   "BANCO SICOOB": ["Chave PIX", "Cliente ID"],
-  "BANCO SICREDI": ["Chave PIX", "Client ID", "Client Secret", "Comprovante do portal da Sicredi"],
+  "BANCO SICREDI": ["Chave PIX", "Client ID", "Client Secret"],
   BANRISUL: ["Chave PIX", "Client ID", "Client Secret", "Chave_Dict"]
 };
 
 const placeholdersCamposPix = {
-  "BANCO BRADESCO::Chave Aleatória": "Chave aleatória criada seguindo o procedimento acima"
+  "BANCO BRADESCO::Chave Aleatória": "Chave aleatória criada seguindo o procedimento acima",
+  "BANCO ITAU::Chave PIX": "CHAVE PIX APONTADA CONFORME O PASSO 5 DO PDF"
 };
 
 const guiasPix = {
@@ -166,18 +167,19 @@ DADOS DO INTEGRADOR:
   }
 };
 
-const avisosPix = {};
+const avisosPix = {
+  "BANCO SICREDI": [
+    "Antes de prosseguir, entre em contato com o gerente da sua conta Sicredi e solicite a liberação do PIX, usando a frase abaixo:",
+    "<em>&ldquo;Preciso realizar a integração do PIX da minha conta Sicredi, utilizando a Shipay como provedor. Poderia confirmar se minha conta está habilitada para essa integração e, caso não esteja, me orientar sobre como realizar a habilitação?&rdquo;</em>",
+    "Só depois que o gerente autorizar, siga o passo a passo do PDF acima para gerar as credenciais."
+  ]
+};
 
 const instrucoesAnexoPix = {
   "BANCO PAGSEGURO (PAGBANK)::Certificado e Private Key": {
     message: "Encaminhe o certificado e a Private Key enviados pela PagSeguro.",
     hint: "Depois de abrir o WhatsApp, anexe os dois arquivos na conversa.",
     value: "Certificado e Private Key serão encaminhados como anexo no WhatsApp."
-  },
-  "BANCO SICREDI::Comprovante do portal da Sicredi": {
-    message: "A chave PIX informada deve estar cadastrada na Sicredi. Ao gerar as credenciais conforme orientado no PDF acima, clique no botão imprimir para gerar o Comprovante em arquivo PDF.",
-    hint: "Por gentileza, encaminhe esse comprovante e solicite ao gerente da Sicredi a liberação do Client_ID e Client_Secret para utilizar o PIX no TEF. As credenciais só terão validade após essa liberação.",
-    value: "Comprovante do portal da Sicredi será encaminhado em PDF junto com as credenciais fornecidas."
   }
 };
 
@@ -212,6 +214,7 @@ const bankPdfDownload = document.querySelector("#bankPdfDownload");
 const bankPdfExternal = document.querySelector("#bankPdfExternal");
 const bankPdfPreview = document.querySelector("#bankPdfPreview");
 const pixDynamicFields = document.querySelector("#pixDynamicFields");
+const pixAvisos = document.querySelector("#pixAvisos");
 const sendInfoBtn = document.querySelector("#sendInfoBtn");
 const sendHint = document.querySelector("#sendHint");
 const notice = document.querySelector("#notice");
@@ -940,6 +943,7 @@ function getPixFieldPlaceholder(banco, campo) {
 
 function createPixFields() {
   pixDynamicFields.innerHTML = "";
+  pixAvisos.innerHTML = "";
 
   const banco = bancoPix.value;
   const campos = regrasPix[banco] || [];
@@ -952,15 +956,12 @@ function createPixFields() {
 
   const avisos = avisosPix[banco];
   if (avisos && avisos.length) {
-    const avisoWrapper = document.createElement("div");
-    avisoWrapper.className = "field field--full";
-    avisoWrapper.innerHTML = `
+    pixAvisos.innerHTML = `
       <div class="attention-card pix-attention-card">
         <strong>Atenção</strong>
         <p>${avisos.join("<br />")}</p>
       </div>
     `;
-    pixDynamicFields.appendChild(avisoWrapper);
   }
 
   campos.forEach((campo) => {
