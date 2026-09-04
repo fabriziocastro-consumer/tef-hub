@@ -289,6 +289,79 @@ textarea:disabled {
   margin: 0;
 }
 
+.credentials-success-card {
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.credentials-success-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--consumer-red), var(--consumer-red-dark));
+  color: white;
+  font-weight: 800;
+}
+
+.credentials-success-card__body {
+  padding: 16px;
+  background: var(--warning-bg);
+  border-top: 1px solid var(--warning-border);
+  font-weight: 700;
+}
+
+.credentials-success-card__body strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.credentials-success-card__body p {
+  margin: 0 0 10px;
+  line-height: 1.45;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.credentials-success-card__body p:last-child {
+  margin-bottom: 0;
+}
+
+.credentials-success-card__body ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.credentials-success-card__body ul:last-child {
+  margin-bottom: 0;
+}
+
+.credentials-success-card__body li {
+  margin-bottom: 8px;
+  line-height: 1.45;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.credentials-success-card__body li:last-child {
+  margin-bottom: 0;
+}
+
+.credentials-success-card__highlight {
+  display: inline-block;
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
 .pix-attention-card {
   margin: 0;
   text-align: center;

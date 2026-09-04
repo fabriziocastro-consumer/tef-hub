@@ -80,7 +80,7 @@ const regrasPix = {
   "BANCO ITAU": ["Chave PIX"],
   "BANCO MERCADO PAGO": ["Public Key", "Access Token", "Client ID", "Client Secret", "Chave PIX"],
   "BANCO PAGSEGURO (PAGBANK)": ["Certificado e Private Key", "Client ID", "Client Secret", "Chave PIX"],
-  "BANCO SANTANDER": ["Chave PIX", "Client ID", "Secret Key"],
+  "BANCO SANTANDER": ["Chave PIX", "Client ID", "Client Secret"],
   "BANCO SICOOB": ["Chave PIX", "Cliente ID"],
   "BANCO SICREDI": ["Chave PIX", "Client ID", "Client Secret"],
   BANRISUL: ["Chave PIX", "Client ID", "Client Secret", "Chave_Dict"]
@@ -139,46 +139,114 @@ const guiasPix = {
     title: "Banco Sicredi",
     file: "banco-sicredi.pdf",
     preview: true
-  },
-  BANRISUL: {
-    title: "Banrisul",
-    description: `O próximo passo é enviar um e-mail ao banco Banrisul, que é o adquirente utilizado atualmente para recebimento de pagamentos via cartão (crédito e débito).
-
-E-mail para envio: inovacaocon@banrisul.com.br
-
-No e-mail, solicite o credenciamento do PIX via TEF e o envio das chaves de integração: 
-Client ID: 
-Client Secret: 
-Chave_Dict:
-
-DADOS DO CLIENTE FINAL TEF:
-- Nome do Cliente (Empresa):
-- CNPJ:
-- Agência (Banrisul):
-- Conta (Banrisul):
-- Nome Completo do Contato da Empresa:
-- E-mail do Contato:
-
-DADOS DO INTEGRADOR:
-- Nome da Empresa: Elgin S.A
-- CNPJ: 52.556.578/0001-22
-- Nome Completo do Técnico: Wagner Soares
-- E-mail do Técnico: wagner.soares@elgin.com.br`
   }
 };
 
 const avisosPix = {
   "BANCO SICREDI": [
-    "Antes de prosseguir, entre em contato com o gerente da sua conta Sicredi e solicite a liberação do PIX, usando a frase abaixo:",
-    "<em>&ldquo;Preciso realizar a integração do PIX da minha conta Sicredi, utilizando a Shipay como provedor. Poderia confirmar se minha conta está habilitada para essa integração e, caso não esteja, me orientar sobre como realizar a habilitação?&rdquo;</em>",
-    "Só depois que o gerente autorizar, siga o passo a passo do PDF acima para gerar as credenciais."
+    "Antes de prosseguir, entre em contato com o gerente da sua conta Sicredi e solicite a liberação do PIX, usando a frase abaixo:<br /><em>&ldquo;Preciso realizar a integração do PIX da minha conta Sicredi, utilizando a Shipay como provedor. Poderia confirmar se minha conta está habilitada para essa integração e, caso não esteja, me orientar sobre como realizar a habilitação?&rdquo;</em>",
+    "Só depois que o gerente autorizar, siga o passo a passo do PDF abaixo para gerar as credenciais."
   ]
 };
 
+const credenciaisSucessoPix = {
+  "BANCO SICREDI": {
+    header: "Leia com atenção",
+    items: [
+      "Envie o Comprovante PDF",
+      { text: "Lembrando que se você não solicitou acesso ao seu gerente, elas não irão funcionar", highlight: true }
+    ]
+  },
+  "BANCO ITAU": {
+    header: "Leia com atenção",
+    items: [
+      "Após preencher o formulário e enviar as informações pelo WhatsApp, pedimos que encaminhe também o print do passo 5 do PDF concluído"
+    ]
+  }
+};
+
+const infoCardsPix = {
+  BANRISUL: {
+    header: "Passo a passo para Banrisul",
+    bodyHtml: `
+      <p>Envie um e-mail ao banco Banrisul, que é o adquirente utilizado atualmente para recebimento de pagamentos via cartão (crédito e débito).</p>
+      <p><strong>E-mail para envio:</strong> inovacaocon@banrisul.com.br</p>
+      <p>No e-mail, solicite o credenciamento do PIX via TEF e o envio das chaves de integração:</p>
+      <ul>
+        <li>Client ID:</li>
+        <li>Client Secret:</li>
+        <li>Chave_Dict:</li>
+      </ul>
+      <p><strong>DADOS DO CLIENTE FINAL TEF:</strong></p>
+      <ul>
+        <li>Nome do Cliente (Empresa):</li>
+        <li>CNPJ:</li>
+        <li>Agência (Banrisul):</li>
+        <li>Conta (Banrisul):</li>
+        <li>Nome Completo do Contato da Empresa:</li>
+        <li>E-mail do Contato:</li>
+      </ul>
+      <p><strong>DADOS DO INTEGRADOR:</strong></p>
+      <ul>
+        <li>Nome da Empresa: Elgin S.A</li>
+        <li>CNPJ: 52.556.578/0001-22</li>
+        <li>Nome Completo do Técnico: Wagner Soares</li>
+        <li>E-mail do Técnico: wagner.soares@elgin.com.br</li>
+      </ul>
+    `
+  }
+};
+
+function buildInfoCardHtml(header, bodyHtml) {
+  return `
+    <div class="credentials-success-card">
+      <div class="credentials-success-card__header">${header}</div>
+      <div class="credentials-success-card__body">${bodyHtml}</div>
+    </div>
+  `;
+}
+
+function renderTopPixCard(banco) {
+  const avisos = avisosPix[banco];
+  if (avisos && avisos.length) {
+    pixAvisos.innerHTML = buildCredenciaisSucessoCardHtml({
+      header: "Atenção",
+      items: avisos
+    });
+    return;
+  }
+
+  const infoCard = infoCardsPix[banco];
+  if (infoCard) {
+    pixAvisos.innerHTML = buildInfoCardHtml(infoCard.header, infoCard.bodyHtml);
+  }
+}
+function buildCredenciaisSucessoCardHtml(config, attrs = "") {
+  const itemsHtml = config.items
+    .map((item) => {
+      const isObject = typeof item === "object" && item !== null;
+      const text = isObject ? item.text : item;
+      const highlight = isObject && item.highlight;
+      return highlight
+        ? `<li><span class="credentials-success-card__highlight">${text}</span></li>`
+        : `<li>${text}</li>`;
+    })
+    .join("");
+
+  return `
+    <div class="credentials-success-card"${attrs}>
+      <div class="credentials-success-card__header">${config.header}</div>
+      <div class="credentials-success-card__body">
+        <ul>${itemsHtml}</ul>
+      </div>
+    </div>
+  `;
+}
+
 const instrucoesAnexoPix = {
   "BANCO PAGSEGURO (PAGBANK)::Certificado e Private Key": {
-    message: "Encaminhe o certificado e a Private Key enviados pela PagSeguro.",
-    hint: "Depois de abrir o WhatsApp, anexe os dois arquivos na conversa.",
+    message: "Após o envio das informações, solicitamos que sejam anexados na conversa os certificados recebidos por e-mail do PagSeguro (Private Key e Certificado).",
+    hint: "Anexe os certificados recebidos por e-mail do PagSeguro (Private Key e Certificado).",
     value: "Certificado e Private Key serão encaminhados como anexo no WhatsApp."
   }
 };
@@ -954,15 +1022,7 @@ function createPixFields() {
     ? `Campos obrigatórios para ${banco}: ${campos.join(", ")}.`
     : "Selecione o banco para carregar os campos obrigatórios.";
 
-  const avisos = avisosPix[banco];
-  if (avisos && avisos.length) {
-    pixAvisos.innerHTML = `
-      <div class="attention-card pix-attention-card">
-        <strong>Atenção</strong>
-        <p>${avisos.join("<br />")}</p>
-      </div>
-    `;
-  }
+  renderTopPixCard(banco);
 
   campos.forEach((campo) => {
     const key = toFieldKey(campo);
@@ -972,13 +1032,13 @@ function createPixFields() {
 
     if (attachmentInstruction) {
       wrapper.className = "field field--full";
-      wrapper.innerHTML = `
-        <div class="attention-card pix-attention-card" data-pix-label="${campo}" data-pix-value="${attachmentInstruction.value}">
-          <strong>Atenção</strong>
-          <p>${attachmentInstruction.message}</p>
-          <small>${attachmentInstruction.hint}</small>
-        </div>
-      `;
+      wrapper.innerHTML = buildCredenciaisSucessoCardHtml(
+        {
+          header: "Leia com atenção",
+          items: [attachmentInstruction.message]
+        },
+        ` data-pix-label="${campo}" data-pix-value="${attachmentInstruction.value}"`
+      );
     } else {
       wrapper.className = "field";
       wrapper.innerHTML = `
@@ -990,6 +1050,14 @@ function createPixFields() {
 
     pixDynamicFields.appendChild(wrapper);
   });
+
+  const credenciaisSucesso = credenciaisSucessoPix[banco];
+  if (credenciaisSucesso) {
+    const sucessoWrapper = document.createElement("div");
+    sucessoWrapper.className = "field field--full";
+    sucessoWrapper.innerHTML = buildCredenciaisSucessoCardHtml(credenciaisSucesso);
+    pixDynamicFields.appendChild(sucessoWrapper);
+  }
 
   updateSubmitState();
 }
