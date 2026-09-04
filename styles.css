@@ -291,6 +291,7 @@ textarea:disabled {
 
 .credentials-success-card {
   margin-top: 4px;
+  margin-bottom: 18px;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
